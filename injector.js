@@ -2,6 +2,10 @@
 
 var _ = require('lodash');
 
+/**
+ * @todo  Check `paths` support
+ */
+
 function Injector(options) {
   Injector._ensureRequireJS();
 
@@ -77,6 +81,15 @@ Injector.prototype.unmap = function(id) {
 };
 
 Injector.prototype.mock = function(id, value) {
+
+  // Support object notation
+  if (typeof id === 'object') {
+    _.each(id, function(value, key) {
+      this.mock(key, value);
+    }, this);
+
+    return this;
+  }
 
   /**
    * Requirejs.define register module in global queue.

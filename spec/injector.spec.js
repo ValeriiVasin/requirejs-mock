@@ -152,10 +152,32 @@ describe('Injector', function() {
       expect(otherInjector.require('module/c')).toBe('CD');
     });
 
+    it('mock with an object', function() {
+      var obj = { toString: function() { return 'O' } };
+
+      injector.mock('module/a', obj);
+      expect(injector.require('module/a')).toBe(obj);
+    });
+
+    it('mock with a function', function() {
+      function f() {}
+
+      injector.mock('module/a', f);
+      expect(injector.require('module/a')).toBe(f);
+    });
+
+    it('supports multiple mocks notations', function() {
+      injector.mock({
+        'module/a': 'hello',
+        'module/b': 'world'
+      });
+
+      expect(injector.require('module/a')).toBe('hello');
+      expect(injector.require('module/b')).toBe('world');
+    });
+
+    it('throws error if incorrect mock notation is used');
+
     it('mock mapped modules');
-
-    it('mock with an object');
-
-    it('mock with a function');
   });
 });
