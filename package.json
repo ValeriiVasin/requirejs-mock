@@ -1,0 +1,30 @@
+{
+  "name": "requirejs-mock",
+  "version": "1.0.0",
+  "description": "Mock for RequireJS modules.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node node_modules/jasmine/bin/jasmine"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ValeriiVasin/requirejs-mock"
+  },
+  "keywords": [
+    "requirejs",
+    "mock"
+  ],
+  "author": "Valerii Vasin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ValeriiVasin/requirejs-mock/issues"
+  },
+  "homepage": "https://github.com/ValeriiVasin/requirejs-mock",
+  "devDependencies": {
+    "jasmine": "^2.2.1",
+    "requirejs": "^2.1.16"
+  },
+  "dependencies": {
+    "lodash": "^3.5.0"
+  }
+}
