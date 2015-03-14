@@ -23,13 +23,31 @@ describe('Injector', function() {
   var injectorWithMap;
 
   beforeEach(function() {
-    injector = new Injector(requirejs);
-    injectorWithMap = new Injector(requirejs, { context: 'withMap' });
+    injector = new Injector();
+    injectorWithMap = new Injector({ context: 'withMap' });
   });
 
   afterEach(function() {
     injector.release();
     injectorWithMap.release();
+  });
+
+  describe('Contstructor', function() {
+    beforeEach(function() {
+      Injector.requirejs = null;
+    });
+
+    afterEach(function() {
+      Injector.requirejs = requirejs;
+    });
+
+    it('should throw error if requirejs has not been provided', function() {
+      function initInjector() {
+        return Injector.create();
+      }
+
+      expect(initInjector).toThrow();
+    });
   });
 
   describe('Contexts', function() {

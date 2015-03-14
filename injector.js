@@ -4,15 +4,15 @@ var _ = require('lodash');
 
 var DEFAULT_CONTEXT = '_';
 
-function Injector(requirejs, options) {
-  this.requirejs = requirejs;
+function Injector(options) {
+  Injector._ensureRequireJS();
+
   this.options = _.extend({ context: DEFAULT_CONTEXT }, options || {});
 
   this._contextName = _.uniqueId('__mocks__');
 
   // create new context based on provided to prent modifications
   this.context = Injector.Util.createContext(
-    this.requirejs,
     this._contextName,
     { extend: this.options.context }
   );
@@ -80,7 +80,7 @@ Injector.prototype.require = function() {
 };
 
 Injector.prototype.release = function() {
-  delete this.requirejs.s.contexts[this.context.contextName];
+  delete Injector.requirejs.s.contexts[this.context.contextName];
 };
 
 
@@ -100,27 +100,29 @@ Injector.Util = {};
  *   // create new context based on default context
  *   Injector.Util.createContext(requirejs, 'mock_25', { extend: '_' })
  */
-Injector.Util.createContext = function(requirejs, contextName, options) {
+Injector.Util.createContext = function(contextName, options) {
+  Injector._ensureRequireJS();
+
   if (typeof options === 'undefined') {
     options = {};
   }
 
   if (!options.extend) {
-    requirejs.config({
+    Injector.requirejs.config({
       context: contextName
     });
 
-    return Injector.Util.getContext(requirejs, contextName);
+    return Injector.Util.getContext(contextName);
   }
 
   // create new requirejs context based on provided
-  requirejs.config(_.extend(
+  Injector.requirejs.config(_.extend(
     {},
-    Injector.Util.getContext(requirejs, options.extend).config,
+    Injector.Util.getContext(options.extend).config,
     { context: contextName, __originalContext: options.extend }
   ));
 
-  return Injector.Util.getContext(requirejs, contextName);
+  return Injector.Util.getContext(contextName);
 };
 
 /**
@@ -129,8 +131,9 @@ Injector.Util.createContext = function(requirejs, contextName, options) {
  * @param  {String}   contextName Context name
  * @return {RequireJS.Context}    RequireJS context
  */
-Injector.Util.getContext = function(requirejs, contextName) {
-  return requirejs.s.contexts[contextName];
+Injector.Util.getContext = function(contextName) {
+  Injector._ensureRequireJS();
+  return Injector.requirejs.s.contexts[contextName];
 };
 
 /**
@@ -141,6 +144,16 @@ Injector.Util.getContext = function(requirejs, contextName) {
 Injector.provide = function(requirejs) {
   Injector.requirejs = requirejs;
   return Injector;
+};
+
+Injector._ensureRequireJS = function() {
+  if (typeof Injector.requirejs !== 'function') {
+    throw new Error('RequireJS has not been provided!');
+  }
+};
+
+Injector.create = function(options) {
+  return new Injector(options);
 };
 
 module.exports = Injector;

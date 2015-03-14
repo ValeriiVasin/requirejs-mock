@@ -1,7 +1,7 @@
 {
   "name": "requirejs-mock",
   "version": "1.0.0",
-  "description": "Mock for RequireJS modules.",
+  "description": "Dependency injector for RequireJS modules.",
   "main": "index.js",
   "scripts": {
     "test": "node node_modules/jasmine/bin/jasmine"
