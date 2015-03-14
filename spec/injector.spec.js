@@ -41,9 +41,17 @@ describe('Injector', function() {
       Injector.requirejs = requirejs;
     });
 
-    it('should throw error if requirejs has not been provided', function() {
+    it('should throw if requirejs has not been provided', function() {
       function initInjector() {
         return Injector.create();
+      }
+
+      expect(initInjector).toThrow();
+    });
+
+    it('should throw if we are going to use non-exited context for injector', function() {
+      function initInjector() {
+        Injector.create({ context: 'nonExistingContext' });
       }
 
       expect(initInjector).toThrow();
@@ -106,5 +114,48 @@ describe('Injector', function() {
 
       expect(injector.require('module/c_local')).toBe('mockAmockB');
     });
+  });
+
+  describe('Mocks', function() {
+    var otherInjector;
+
+    beforeEach(function() {
+      // create `other` context
+      Injector.Util.createContext('other', { extend: Injector.DEFAULT_CONTEXT });
+      otherInjector = Injector.create({ context: 'other' });
+    });
+
+    afterEach(function() {
+      otherInjector.release();
+    });
+
+    it('mock with a simple value', function() {
+      injector.mock('module/a', 15);
+      expect(injector.require('module/a')).toBe(15);
+    });
+
+    it('nested requires with simple value', function() {
+      injector.mock('module/a', 'A');
+      injector.mock('module/b', 'B');
+
+      expect(injector.require('module/c')).toBe('AB');
+    });
+
+    it('mock different contexts at a time', function() {
+      injector.mock('module/a', 'A');
+      injector.mock('module/b', 'B');
+
+      otherInjector.mock('module/a', 'C');
+      otherInjector.mock('module/b', 'D');
+
+      expect(injector.require('module/c')).toBe('AB');
+      expect(otherInjector.require('module/c')).toBe('CD');
+    });
+
+    it('mock mapped modules');
+
+    it('mock with an object');
+
+    it('mock with a function');
   });
 });

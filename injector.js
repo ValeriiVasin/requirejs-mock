@@ -2,14 +2,12 @@
 
 var _ = require('lodash');
 
-var DEFAULT_CONTEXT = '_';
-
 function Injector(options) {
   Injector._ensureRequireJS();
 
-  this.options = _.extend({ context: DEFAULT_CONTEXT }, options || {});
+  this.options = _.extend({ context: Injector.DEFAULT_CONTEXT }, options || {});
 
-  this._contextName = _.uniqueId('__mocks__');
+  this._contextName = _.uniqueId('__MockContext__');
 
   // create new context based on provided to prent modifications
   this.context = Injector.Util.createContext(
@@ -17,6 +15,9 @@ function Injector(options) {
     { extend: this.options.context }
   );
 }
+
+// Default requirejs context name
+Injector.DEFAULT_CONTEXT = '_';
 
 /**
  * Allow map real modules for mocks easy
@@ -75,6 +76,29 @@ Injector.prototype.unmap = function(id) {
   return this;
 };
 
+Injector.prototype.mock = function(id, value) {
+
+  /**
+   * Requirejs.define register module in global queue.
+   *
+   * See:
+   * https://github.com/jrburke/requirejs/blob/dbcfc05df1cec15768a79f12b67c1824c1c484eb/require.js#L2062
+   */
+  Injector.requirejs.define(id, function() {
+    return value;
+  });
+
+  // Require it from global context to current context
+  // Should be called here - otherwice module will be registered in first context
+  // that will require it (lazy initialization)
+  //
+  // See:
+  // https://github.com/jrburke/requirejs/blob/dbcfc05df1cec15768a79f12b67c1824c1c484eb/require.js#L1230
+  this.require(id);
+
+  return this;
+};
+
 Injector.prototype.require = function() {
   return this.context.require.apply(this.context, arguments);
 };
@@ -113,6 +137,12 @@ Injector.Util.createContext = function(contextName, options) {
     });
 
     return Injector.Util.getContext(contextName);
+  }
+
+  var context = Injector.Util.getContext(options.extend);
+
+  if (!context) {
+    throw new Error('Context does not exist: ' + options.extend);
   }
 
   // create new requirejs context based on provided
