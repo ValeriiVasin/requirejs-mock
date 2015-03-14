@@ -88,5 +88,23 @@ describe('Injector', function() {
       injectorWithMap.unmap('module/a');
       expect(injectorWithMap.require('module/a')).toBe('a');
     });
+
+    it('works on nested require calls', function() {
+      injector.map({
+        'module/a': 'mock/a',
+        'module/b': 'mock/b'
+      });
+
+      expect(injector.require('module/c')).toBe('mockAmockB');
+    });
+
+    it('works on nested require calls with relative path', function() {
+      injector.map({
+        'module/a': 'mock/a',
+        'module/b': 'mock/b'
+      });
+
+      expect(injector.require('module/c_local')).toBe('mockAmockB');
+    });
   });
 });
