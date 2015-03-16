@@ -91,6 +91,10 @@ Injector.prototype.mock = function(id, value) {
     return this;
   }
 
+  if (typeof id !== 'string') {
+    throw new TypeError('Module name should be a string.');
+  }
+
   /**
    * Requirejs.define register module in global queue.
    *
@@ -116,7 +120,10 @@ Injector.prototype.require = function() {
   return this.context.require.apply(this.context, arguments);
 };
 
-Injector.prototype.release = function() {
+/**
+ * Destroy injector and cleanup
+ */
+Injector.prototype.destroy = function() {
   delete Injector.requirejs.s.contexts[this.context.contextName];
 };
 

@@ -28,8 +28,8 @@ describe('Injector', function() {
   });
 
   afterEach(function() {
-    injector.release();
-    injectorWithMap.release();
+    injector.destroy();
+    injectorWithMap.destroy();
   });
 
   describe('Contstructor', function() {
@@ -126,7 +126,7 @@ describe('Injector', function() {
     });
 
     afterEach(function() {
-      otherInjector.release();
+      otherInjector.destroy();
     });
 
     it('mock with a simple value', function() {
@@ -176,8 +176,19 @@ describe('Injector', function() {
       expect(injector.require('module/b')).toBe('world');
     });
 
-    it('throws error if incorrect mock notation is used');
+    it('throws error if incorrect mock syntax is used for mock', function() {
+      function createMock() {
+        injector.mock(123);
+      }
 
-    it('mock mapped modules');
+      expect(createMock).toThrow();
+    });
+
+    it('mock mapped modules', function() {
+      pending('Implementation is not ready');
+
+      injectorWithMap.mock('module/a', 123);
+      expect(injector.require('module/a')).toBe(123);
+    });;
   });
 });
