@@ -1,6 +1,53 @@
 # About
 `requirejs-mock` is a dependency injector for RequireJS modules.
 
+# Installation
+```
+npm install requirejs-mock --save-dev
+```
+
+# Usage example
+```js
+var requirejs = require('requirejs');
+var Injector = require('requirejs-mock').provide(requirejs);
+
+describe('Test', function() {
+  var injector;
+  var mockA;
+  var mockB;
+
+  beforeEach(function() {
+    // instantiate injector
+    injector = Injector.create();
+
+    // remapping to mock module
+    injector.map('module/a', 'mock/a');
+
+    // if you need to check smth on mockA
+    mockA = injector.require('module/a');
+
+    // use direct mock
+    mockB = { someAction: jasmine.createSpy() };
+    injector.mock('module/b', mockB);
+  });
+
+  // cleanup
+  afterEach(function() {
+    injector.destroy();
+  });
+
+  it('should work', function() {
+    // require module C that depends on A and B
+    var c = injector.require('module/c');
+    c.doSmth();
+
+    expect(mockB.someAction).toHaveBeenCalled();
+    expect(mockA.someAction).toHaveBeenCalled();
+  });
+});
+```
+
+# API
 ## Injector creation
 First of all you need to create an injector that will allow you to mock your modules dependencies.
 
@@ -68,7 +115,7 @@ describe('Mocks', function() {
 });
 ```
 
-## Destroying injector
+## Destroying the injector
 You should always destroy injector to cleanup after it.
 
 ```js
