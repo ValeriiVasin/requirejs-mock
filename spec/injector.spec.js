@@ -1,3 +1,5 @@
+'use strict';
+
 var requirejs = require('requirejs');
 var Injector = require('../injector').provide(requirejs);
 

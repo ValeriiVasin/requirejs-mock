@@ -172,9 +172,11 @@ Injector.Util = {};
 /**
  * Create new context inside RequireJS
  *
- * @param  {String} contextName New context name
- * @param  {Object} options     Options
- * @return {Context}            RequireJS context
+ * @param  {String} contextName      New context name
+ * @param  {Object} options          Options
+ * @param  {String} [options.extend] Context that will be extended
+ *                                   (all settings copied from)
+ * @return {Context}                 RequireJS context
  *
  * @example
  *   // create new context based on default context
