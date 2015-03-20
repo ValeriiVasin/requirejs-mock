@@ -18,6 +18,21 @@ function Injector(options) {
     this._contextName,
     { extend: this.options.context }
   );
+
+  // mapping initialization
+  if (!this.context.config.map) {
+    this.context.config.map = { '*': {} };
+  }
+
+  if (!this.context.config.map['*']) {
+    this.context.config.map['*'] = {};
+  }
+
+  // @todo Think about per module mapping support
+  this._originalMaps = this.context.config.map['*'];
+
+  // copy from original
+  this._maps = _.extend({}, this.context.config.map['*']);
 }
 
 // Default requirejs context name
@@ -48,15 +63,8 @@ Injector.prototype.map = function(id, mockId) {
     mapping = id;
   }
 
-  if (!this.context.config.map) {
-    this.context.config.map = { '*': {} };
-  }
-
-  if (!this.context.config.map['*']) {
-    this.context.config.map['*'] = {};
-  }
-
-  _.extend(this.context.config.map['*'], mapping);
+  _.extend(this._maps, mapping);
+  this._applyMaps();
 
   return this;
 };
@@ -77,7 +85,17 @@ Injector.prototype.map = function(id, mockId) {
  *
  */
 Injector.prototype.unmap = function(id) {
+  this._maps[id] = this._originalMaps[id];
+  this._applyMaps();
   return this;
+};
+
+/**
+ * Apply mapping for the context
+ * @private
+ */
+Injector.prototype._applyMaps = function() {
+  this.context.config.map['*'] = this._maps;
 };
 
 Injector.prototype.mock = function(id, value) {
@@ -126,7 +144,6 @@ Injector.prototype.require = function() {
 Injector.prototype.destroy = function() {
   delete Injector.requirejs.s.contexts[this.context.contextName];
 };
-
 
 /**
  * Utils

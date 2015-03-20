@@ -88,13 +88,18 @@ describe('Injector', function() {
       expect(injectorWithMap.require('module/b')).toBe('mockB');
     });
 
-    it('unmaps to original', function() {
-      pending('Implementation is not ready');
+    it('map then unmap', function() {
+      injector.map('module/b', 'mock/b');
+      expect(injector.require('module/b')).toBe('mockB');
+      injector.unmap('module/b');
+      expect(injector.require('module/b')).toBe('b');
+    });
 
-      injectorWithMap.map('module/a', 'mock/a');
-      expect(injectorWithMap.require('module/a')).toBe('mockA');
+    it('unmaps to original mapping', function() {
+      injectorWithMap.map('module/a', 'mock/b');
+      expect(injectorWithMap.require('module/a')).toBe('mockB');
       injectorWithMap.unmap('module/a');
-      expect(injectorWithMap.require('module/a')).toBe('a');
+      expect(injectorWithMap.require('module/a')).toBe('mockA');
     });
 
     it('works on nested require calls', function() {
@@ -189,6 +194,6 @@ describe('Injector', function() {
 
       injectorWithMap.mock('module/a', 123);
       expect(injector.require('module/a')).toBe(123);
-    });;
+    });
   });
 });
