@@ -31,6 +31,9 @@ function Injector(options) {
   // @todo Think about per module mapping support
   this._originalMaps = this.context.config.map['*'];
 
+  // mocked maps allow properly mock/unmock mapped modules
+  this._mockedMaps = {};
+
   // copy from original
   this._maps = _.extend({}, this.context.config.map['*']);
 }
@@ -131,6 +134,12 @@ Injector.prototype.mock = function(id, value) {
   if (typeof id !== 'string') {
     throw new TypeError('Module name should be a string.');
   }
+
+  // move mappings into _mockedMaps object to allow mock mapped modules
+  // and properly handle unmock()
+  this._mockedMaps[id] = this._maps[id];
+  delete this._maps[id];
+  this._applyMaps();
 
   /**
    * Requirejs.define register module in global queue.

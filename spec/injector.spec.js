@@ -226,10 +226,8 @@ describe('Injector', function() {
     });
 
     it('mock mapped modules', function() {
-      pending('Implementation is not ready');
-
       injectorWithMap.mock('module/a', 123);
-      expect(injector.require('module/a')).toBe(123);
+      expect(injectorWithMap.require('module/a')).toBe(123);
     });
   });
 });
