@@ -88,14 +88,22 @@ describe('Injector', function() {
       expect(injectorWithMap.require('module/b')).toBe('mockB');
     });
 
-    it('map then unmap', function() {
+    it('allows remap during the execution', function() {
+      injector.map('module/a', 'mock/a');
+      expect(injector.require('module/a')).toBe('mockA');
+
+      injector.map('module/a', 'mock/b');
+      expect(injector.require('module/a')).toBe('mockB');
+    });
+
+    it('unmap', function() {
       injector.map('module/b', 'mock/b');
       expect(injector.require('module/b')).toBe('mockB');
       injector.unmap('module/b');
       expect(injector.require('module/b')).toBe('b');
     });
 
-    it('unmaps to original mapping', function() {
+    it('unmap to original mapping', function() {
       injectorWithMap.map('module/a', 'mock/b');
       expect(injectorWithMap.require('module/a')).toBe('mockB');
       injectorWithMap.unmap('module/a');
@@ -158,7 +166,7 @@ describe('Injector', function() {
     });
 
     it('mock with an object', function() {
-      var obj = { toString: function() { return 'O' } };
+      var obj = { toString: function() { return 'O'; } };
 
       injector.mock('module/a', obj);
       expect(injector.require('module/a')).toBe(obj);
