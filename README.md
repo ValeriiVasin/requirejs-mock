@@ -68,25 +68,52 @@ var otherInjector = Injector.create({ context: 'specs' });
 If you have a module mock in a separate file and just need to replace module with it - you should use module mapping.
 
 ```js
-describe('Remapping dependencies', function() {
-  var injector;
+beforeEach(function() {
+  var injector = Injector.create();
 
-  beforeEach(function() {
-    injector = Injector.create();
+  // remap module A to its mock
+  injector.map('module/a', 'mock/a');
+  injector.map('module/b', 'mock/b');
 
-    // remap module A to its mock
-    injector.map('module/a', 'mock/a');
-    injector.map('module/b', 'mock/b');
-
-    // or as an object
-    injector.map({
-      'module/a': 'mock/a',
-      'module/b': 'mock/b'
-    });
-
-    // load module C (that depends on A and B)
-    var c = injector.require('module/c');
+  // or as an object
+  injector.map({
+    'module/a': 'mock/a',
+    'module/b': 'mock/b'
   });
+
+  // load module C (that depends on A and B)
+  var c = injector.require('module/c');
+});
+```
+
+You could also provide different maps at the same time and restore original module value:
+
+```js
+beforeEach(function() {
+  var injector = Injector.create();
+
+  // get original module value
+  var aOrig = injector.require('module/a');
+
+  // remap module/a => mock/a
+  injector.map('module/a', 'mock/a');
+
+  var a = injector.require('module/a');
+  console.log(a === injector.require('mock/a')); // => true
+
+  // remap module A => mock/a_one
+  injector.map('module/a', 'mock/a_one');
+
+  var aOne = injector.require('module/a');
+  console.log(
+     aOne === injector.require('mock/a_one')
+  ); // => true
+
+  // restore original module
+  injector.unmap('module/a');
+  console.log(
+    injector.require('module/a') === aOrig
+  ); // => true
 });
 ```
 
