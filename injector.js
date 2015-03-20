@@ -72,21 +72,40 @@ Injector.prototype.map = function(id, mockId) {
 /**
  * Copy mapping settings from original context
  *
- * @param {String} [id] Module id to unmap
+ * @param {String|Array} [...ids] Module id(s) to unmap
  * @return {Injector}   Injector instance
  *
  * @example
- *   injector
- *     .map('module/a', 'mock/a');
- *     .require('module/a');        // returns mock/a
+ *  injector
+ *    .map('module/a', 'mock/a');
+ *    .require('module/a');        // returns mock/a
  *
- *   injector.unmap('module/a')
- *     .require('module/a');        // returns original module/a
+ *  injector.unmap('module/a')
+ *     .require('module/a');       // returns original module/a
+ *
+ *  @example
+ *    injector.unmap('module/a', 'module/b'); // restore original modules
+ *
+ *  @example
+ *    injector.unmap(); // restore all mapped before modules
  *
  */
-Injector.prototype.unmap = function(id) {
-  this._maps[id] = this._originalMaps[id];
+Injector.prototype.unmap = function(ids) {
+  if (typeof ids === 'undefined') {
+    // restore all
+    this._maps = _.extend({}, this._originalMaps);
+    this._applyMaps();
+    return this;
+  }
+
+  ids = _.toArray(arguments);
+
+  ids.forEach(function(id) {
+    this._maps[id] = this._originalMaps[id];
+  }, this);
+
   this._applyMaps();
+
   return this;
 };
 

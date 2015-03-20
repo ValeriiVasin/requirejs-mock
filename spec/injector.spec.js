@@ -96,20 +96,6 @@ describe('Injector', function() {
       expect(injector.require('module/a')).toBe('mockB');
     });
 
-    it('unmap', function() {
-      injector.map('module/b', 'mock/b');
-      expect(injector.require('module/b')).toBe('mockB');
-      injector.unmap('module/b');
-      expect(injector.require('module/b')).toBe('b');
-    });
-
-    it('unmap to original mapping', function() {
-      injectorWithMap.map('module/a', 'mock/b');
-      expect(injectorWithMap.require('module/a')).toBe('mockB');
-      injectorWithMap.unmap('module/a');
-      expect(injectorWithMap.require('module/a')).toBe('mockA');
-    });
-
     it('works on nested require calls', function() {
       injector.map({
         'module/a': 'mock/a',
@@ -126,6 +112,46 @@ describe('Injector', function() {
       });
 
       expect(injector.require('module/c_local')).toBe('mockAmockB');
+    });
+  });
+
+  describe('Unmapping', function() {
+    it('unmap', function() {
+      injector.map('module/b', 'mock/b');
+      expect(injector.require('module/b')).toBe('mockB');
+      injector.unmap('module/b');
+      expect(injector.require('module/b')).toBe('b');
+    });
+
+    it('unmap to original mapping', function() {
+      injectorWithMap.map('module/a', 'mock/b');
+      expect(injectorWithMap.require('module/a')).toBe('mockB');
+      injectorWithMap.unmap('module/a');
+      expect(injectorWithMap.require('module/a')).toBe('mockA');
+    });
+
+    it('unmap few modules at once', function() {
+      injector.map({
+        'module/a': 'mock/a',
+        'module/b': 'mock/b'
+      });
+
+      injector.unmap('module/a', 'module/b');
+
+      expect(injector.require('module/a')).toBe('a');
+      expect(injector.require('module/b')).toBe('b');
+    });
+
+    it('unmap all previously mapped modules', function() {
+      injector.map({
+        'module/a': 'mock/a',
+        'module/b': 'mock/b'
+      });
+
+      injector.unmap();
+
+      expect(injector.require('module/a')).toBe('a');
+      expect(injector.require('module/b')).toBe('b');
     });
   });
 
