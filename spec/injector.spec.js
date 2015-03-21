@@ -256,6 +256,14 @@ describe('Injector', function() {
 
       expect(mapAndMock).toThrow();
     });
+
+    it('mock module cached before', function() {
+      // cache module
+      injector.require('module/a');
+      injector.mock('module/a', 123);
+
+      expect(injector.require('module/a')).toBe(123);
+    });
   });
 
   describe('Unmock', function() {
@@ -294,6 +302,40 @@ describe('Injector', function() {
       injectorWithMap.unmock('module/a');
 
       expect(injectorWithMap.require('module/a')).toBe('mockA');
+    });
+  });
+
+  describe('Undef', function() {
+    it('undef one module', function() {
+      // module/c will be cached
+      expect(injector.require('module/c')).toBe('ab');
+
+      injector.map('module/a', 'mock/a');
+      injector.map('module/b', 'mock/b');
+
+      // from cache
+      expect(injector.require('module/c')).toBe('ab');
+
+      // remove from cache
+      injector.undef('module/c');
+
+      expect(injector.require('module/c')).toBe('mockAmockB');
+    });
+
+    it('undef few modules at once', function() {
+      spyOn(injector.context.require, 'undef').and.callThrough();
+
+      injector.undef('module/a', 'module/b');
+
+      expect(injector.context.require.undef).toHaveBeenCalledWith('module/a');
+      expect(injector.context.require.undef).toHaveBeenCalledWith('module/b');
+    });
+
+    it('cleanup mocks if module has been mocked before', function() {
+      injector.mock('module/a', 123);
+      injector.undef('module/a');
+
+      expect(injector._isMocked('module/a')).toBe(false);
     });
   });
 });

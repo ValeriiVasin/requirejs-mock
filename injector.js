@@ -192,6 +192,9 @@ Injector.prototype.mock = function(id, value) {
     throw new Error('Module `' + id + '` has been mocked before!');
   }
 
+  // remove module cache
+  this.undef(id);
+
   // move mappings into _mockedMaps object to allow mock mapped modules
   // and properly handle unmock()
   this._mockedMaps[id] = this._maps[id];
@@ -223,7 +226,7 @@ Injector.prototype.mock = function(id, value) {
 };
 
 Injector.prototype._isMocked = function(id) {
-  return this._mocked[id];
+  return Boolean(this._mocked[id]);
 };
 
 /**
@@ -273,10 +276,30 @@ Injector.prototype.require = function() {
 };
 
 /**
+ * Remove module from RequireJS cache
+ * @param  {String}   id... Module ids to forget
+ * @return {Injector}       Injector instance
+ */
+Injector.prototype.undef = function() {
+  var ids = _.toArray(arguments);
+
+  ids.forEach(function(id) {
+    // remove mock if module has been mocked before
+    if (this._isMocked(id)) {
+      this.unmock(id);
+    }
+
+    this.context.require.undef(id);
+  }, this);
+
+  return this;
+};
+
+/**
  * Destroy injector and cleanup
  */
 Injector.prototype.destroy = function() {
-  delete Injector.requirejs.s.contexts[this.context.contextName];
+  delete Injector.requirejs.s.contexts[this._contextName];
 };
 
 /**
