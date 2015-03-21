@@ -20,6 +20,15 @@ requirejs.config({
   }
 });
 
+requirejs.config({
+  context: 'withPath',
+  baseUrl: REQUIREJS_BASE_URL,
+  paths: {
+    m: 'mock',
+    o: 'module'
+  }
+});
+
 describe('Injector', function() {
   var injector;
   var injectorWithMap;
@@ -336,6 +345,26 @@ describe('Injector', function() {
       injector.undef('module/a');
 
       expect(injector._isMocked('module/a')).toBe(false);
+    });
+  });
+
+  describe('Paths support', function() {
+    var injectorWithPath;
+
+    beforeEach(function() {
+      injectorWithPath = new Injector({ context: 'withPath' });
+    });
+
+    it('supports maps', function() {
+      expect(injectorWithPath.require('o/a')).toBe('a');
+      injectorWithPath.map('o/a', 'm/a');
+      expect(injectorWithPath.require('o/a')).toBe('mockA');
+    });
+
+    it('supports mocks', function() {
+      expect(injectorWithPath.require('o/a')).toBe('a');
+      injectorWithPath.mock('o/a', 123);
+      expect(injectorWithPath.require('o/a')).toBe(123);
     });
   });
 });

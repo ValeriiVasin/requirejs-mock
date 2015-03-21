@@ -2,10 +2,6 @@
 
 var _ = require('lodash');
 
-/**
- * @todo  Check `paths` support
- */
-
 function Injector(options) {
   Injector._ensureRequireJS();
 
