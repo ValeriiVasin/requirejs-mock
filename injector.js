@@ -29,13 +29,22 @@ function Injector(options) {
   }
 
   // @todo Think about per module mapping support
+
+  // Save original context mapping
+  // to allow unmap properly for contexts that use mappings
   this._originalMaps = this.context.config.map['*'];
 
   // mocked maps allow properly mock/unmock mapped modules
   this._mockedMaps = {};
 
-  // copy from original
+  // Mapping config for all modules (*).
+  // Changes in this config will be reflected in context using _applyMaps()
+  // Notice: copied from original to prevent its changes
   this._maps = _.extend({}, this.context.config.map['*']);
+
+  // store for mocked modules ids
+  // is needed to determine is module mocked or not
+  this._mocked = {};
 }
 
 // Default requirejs context name
@@ -58,18 +67,35 @@ Injector.DEFAULT_CONTEXT = '_';
  *   });
  */
 Injector.prototype.map = function(id, mockId) {
-  var mapping = {};
+  // Support object notation
+  if (id && typeof id === 'object') {
+    _.each(id, function(value, key) {
+      this.map(key, value);
+    }, this);
 
-  if (typeof id === 'string') {
-    mapping[id] = mockId;
-  } else {
-    mapping = id;
+    return this;
   }
 
-  _.extend(this._maps, mapping);
+  if (typeof id !== 'string' || typeof mockId !== 'string') {
+    throw new TypeError('Module ID and mock ID should be a string.');
+  }
+
+  if (this._isMocked(id)) {
+    throw new Error('It is not possible to mock and map module `' + id + '` at same time`');
+  }
+
+  this._maps[id] = mockId;
   this._applyMaps();
 
   return this;
+};
+
+/**
+ * Check if module has been mapped by injector
+ * @return {Boolean} Check result
+ */
+Injector.prototype._isMapped = function(id) {
+  return this._maps[id] && !this._originalMaps[id];
 };
 
 /**
@@ -123,7 +149,7 @@ Injector.prototype._applyMaps = function() {
 Injector.prototype.mock = function(id, value) {
 
   // Support object notation
-  if (typeof id === 'object') {
+  if (id && typeof id === 'object') {
     _.each(id, function(value, key) {
       this.mock(key, value);
     }, this);
@@ -135,11 +161,18 @@ Injector.prototype.mock = function(id, value) {
     throw new TypeError('Module name should be a string.');
   }
 
+  if (this._isMapped(id)) {
+    throw new Error('It is not possible to map and mock module `' + id + '` at same time`');
+  }
+
   // move mappings into _mockedMaps object to allow mock mapped modules
   // and properly handle unmock()
   this._mockedMaps[id] = this._maps[id];
   delete this._maps[id];
   this._applyMaps();
+
+  // add to mocked list
+  this._mocked[id] = true;
 
   /**
    * Requirejs.define register module in global queue.
@@ -160,6 +193,10 @@ Injector.prototype.mock = function(id, value) {
   this.require(id);
 
   return this;
+};
+
+Injector.prototype._isMocked = function(id) {
+  return this._mocked[id];
 };
 
 Injector.prototype.require = function() {

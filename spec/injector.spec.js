@@ -115,6 +115,15 @@ describe('Injector', function() {
 
       expect(injector.require('module/c_local')).toBe('mockAmockB');
     });
+
+    it('throws if trying to map mocked before module', function() {
+      function mockAndMap() {
+        injector.mock('module/a', 123);
+        injector.map('module/a', 'mock/a');
+      }
+
+      expect(mockAndMap).toThrow();
+    });
   });
 
   describe('Unmapping', function() {
@@ -225,9 +234,18 @@ describe('Injector', function() {
       expect(createMock).toThrow();
     });
 
-    it('mock mapped modules', function() {
+    it('mock mapped (by configuration) modules', function() {
       injectorWithMap.mock('module/a', 123);
       expect(injectorWithMap.require('module/a')).toBe(123);
+    });
+
+    it('throws error if trying to mock and map in same time', function() {
+      function mapAndMock() {
+        injector.map('module/a', 'mock/a');
+        injector.mock('module/a', 123);
+      }
+
+      expect(mapAndMock).toThrow();
     });
   });
 });
