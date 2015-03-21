@@ -165,6 +165,10 @@ Injector.prototype.mock = function(id, value) {
     throw new Error('It is not possible to map and mock module `' + id + '` at same time`');
   }
 
+  if (this._isMocked(id)) {
+    throw new Error('Module `' + id + '` has been mocked before!');
+  }
+
   // move mappings into _mockedMaps object to allow mock mapped modules
   // and properly handle unmock()
   this._mockedMaps[id] = this._maps[id];

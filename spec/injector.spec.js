@@ -239,14 +239,13 @@ describe('Injector', function() {
       expect(injectorWithMap.require('module/a')).toBe(123);
     });
 
-    it('possible to mock mocked before module', function() {
-      pending('Not supported yet.');
+    it('throws if mocking module that previously mocked', function() {
+      function mockMocked() {
+        injector.mock('module/a', 123);
+        injector.mock('module/a', 456);
+      }
 
-      injector.mock('module/a', 123);
-      expect(injector.require('module/a')).toBe(123);
-
-      injector.mock('module/a', 456);
-      expect(injector.require('module/a')).toBe(456);
+      expect(mockMocked).toThrow();
     });
 
     it('throws error if trying to mock and map in same time', function() {
