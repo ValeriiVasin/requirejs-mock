@@ -4,7 +4,8 @@
   "description": "Dependency injector for RequireJS modules.",
   "main": "index.js",
   "scripts": {
-    "test": "node node_modules/jasmine/bin/jasmine"
+    "test": "node node_modules/jasmine/bin/jasmine",
+    "lint": "node node_modules/eslint/bin/eslint . && node node_modules/jscs/bin/jscs ."
   },
   "repository": {
     "type": "git",
@@ -21,7 +22,9 @@
   },
   "homepage": "https://github.com/ValeriiVasin/requirejs-mock",
   "devDependencies": {
+    "eslint": "^0.17.1",
     "jasmine": "^2.2.1",
+    "jscs": "^1.11.3",
     "requirejs": "^2.1.16"
   },
   "dependencies": {
