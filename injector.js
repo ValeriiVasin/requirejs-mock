@@ -60,8 +60,8 @@ Injector.DEFAULT_CONTEXT = '_';
  *
  * @example
  *
- *   Injector.map('moduleA', 'mock/moduleA');
- *   Injector.map({
+ *   injector.map('moduleA', 'mock/moduleA');
+ *   injector.map({
  *     'moduleA': 'mock/moduleA',
  *     'moduleB': 'mock/moduleB'
  *   });
@@ -104,20 +104,19 @@ Injector.prototype._isMapped = function(id) {
  * @param {String|Array} [...ids] Module id(s) to unmap
  * @return {Injector}   Injector instance
  *
- * @example
+ * @example Unmap previously mocked module
+ *   injector.unmap('module/a');
+ *
+ * @example Unmap few modules at once
+ *   injector.unmap('module/a', 'module/b');
+ *
+ * @example Unmap all mapped before modules
+ *    injector.unmap();
+ *
+ * @example Chaining
  *  injector
- *    .map('module/a', 'mock/a');
- *    .require('module/a');        // returns mock/a
- *
- *  injector.unmap('module/a')
- *     .require('module/a');       // returns original module/a
- *
- *  @example
- *    injector.unmap('module/a', 'module/b'); // restore original modules
- *
- *  @example
- *    injector.unmap(); // restore all mapped before modules
- *
+ *    .unmap('module/a');
+ *    .require('module/a'); // => original module a
  */
 Injector.prototype.unmap = function(ids) {
   if (typeof ids === 'undefined') {
@@ -146,6 +145,30 @@ Injector.prototype._applyMaps = function() {
   this.context.config.map['*'] = this._maps;
 };
 
+/**
+ * Mock module with a value
+ * @param  {String|Object} id      Module id to mock / Object with id/value for mock
+ * @param  {*}             [value] Value that will be provides as a module result
+ * @return {Injector}              Injector instance
+ *
+ * @example Mock module
+ *   injector.mock('module/a', 123);
+ *   injector.require('module/a'); // => 123
+ *
+ * @example Mock few modules at once
+ *   injector.mock({
+ *     'module/a': 123,
+ *     'module/b': 456
+ *   });
+ *
+ *   injector.require('module/a'); // => 123
+ *   injector.require('module/b'); // => 456
+ *
+ * @example Chaining
+ *   injector
+ *     .mock('module/a', 123)
+ *     .require('module/a');       // => 123
+ */
 Injector.prototype.mock = function(id, value) {
 
   // Support object notation
@@ -201,6 +224,48 @@ Injector.prototype.mock = function(id, value) {
 
 Injector.prototype._isMocked = function(id) {
   return this._mocked[id];
+};
+
+/**
+ * Unmock module(s)
+ * @param  {String}   [ids...] Module id to unmock
+ * @return {Injector}          Injector instance
+ *
+ * @example Unmock single module
+ *   injector.unmock('module/a');
+ *
+ * @example Unmock few modules
+ *   injector.unmock('module/a', 'module/b');
+ *
+ * @example Chaining
+ *   injector.unmock('module/a')
+ *     .mock('module/a', 345);
+ *
+ */
+Injector.prototype.unmock = function(ids) {
+  if (typeof ids === 'undefined') {
+    // unmock all
+    _.each(this._mocked, function(value, key) {
+      this.unmock(key);
+    }, this);
+
+    return this;
+  }
+
+  ids = _.toArray(arguments);
+
+  ids.forEach(function(id) {
+    delete this._mocked[id];
+    this.context.require.undef(id);
+
+    // restore mocked maps
+    if (this._mockedMaps[id]) {
+      this._maps[id] = this._mockedMaps[id];
+      this._applyMaps();
+    }
+  }, this);
+
+  return this;
 };
 
 Injector.prototype.require = function() {

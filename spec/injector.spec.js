@@ -259,25 +259,38 @@ describe('Injector', function() {
   });
 
   describe('Unmock', function() {
-    pending('Implementation is not ready');
+    beforeEach(function() {
+      injector.mock({
+          'module/a': 123,
+          'module/b': 345,
+          'module/c': 678
+      });
+    });
 
-    it('restores module value', function() {
-      injector.mock('module/a', 123);
+    it('unmock module value', function() {
       injector.unmock('module/a');
 
       expect(injector.require('module/a')).toBe('a');
     });
 
-    it('unmocks mapped module', function() {
-      injector.mock('module/a', 123);
-      injector.unmock('module/a');
+    it('unmock few modules', function() {
+      injector.unmock('module/a', 'module/b');
 
-      expect(injector.require('module/a')).toBe('mockA');
+      expect(injector.require('module/a')).toBe('a');
+      expect(injector.require('module/b')).toBe('b');
+      expect(injector.require('module/c')).toBe(678);
     });
 
-    it('mocking few times does not affect mapping', function() {
+    it('unmock all mocked modules', function() {
+      injector.unmock();
+
+      expect(injector.require('module/a')).toBe('a');
+      expect(injector.require('module/b')).toBe('b');
+      expect(injector.require('module/c')).toBe('ab');
+    });
+
+    it('unmock mapped module', function() {
       injectorWithMap.mock('module/a', 123);
-      injectorWithMap.mock('module/a', 456);
       injectorWithMap.unmock('module/a');
 
       expect(injectorWithMap.require('module/a')).toBe('mockA');
