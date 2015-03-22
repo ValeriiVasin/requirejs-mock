@@ -216,9 +216,6 @@ afterEach(function() {
 });
 ```
 
-# How it works
-TBD
-
 # Changelog
 **1.0.0 -** Mar. 22, 2015
 
