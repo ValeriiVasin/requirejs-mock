@@ -1,5 +1,6 @@
-# About
-**requirejs-mock** is a dependency injector for RequireJS modules. It allows you easily mock your module dependencies.
+# Requirejs-mock - Dependency injector for RequireJS modules.
+
+[![Build Status](https://travis-ci.org/ValeriiVasin/requirejs-mock.svg?branch=master)](https://travis-ci.org/ValeriiVasin/requirejs-mock)
 
 # Installation
 ```
