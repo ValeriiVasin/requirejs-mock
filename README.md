@@ -221,10 +221,12 @@ TBD
 
 # Changelog
 **1.0.0 -** Mar. 22, 2015
+
 * **[breaking]** It's not possible to `mock()` and `map()` module at the same time. Previous behavior was not specified
 * Added ability to remove mocks and maps used before
 * Added ability to remove module from RequireJS cache
 
 **0.9.0 -** Mar. 16, 2015
+
 Initial release with basic capabilities
 
