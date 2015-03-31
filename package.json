@@ -25,7 +25,7 @@
     "eslint": "^0.17.1",
     "jasmine": "^2.2.1",
     "jscs": "^1.11.3",
-    "requirejs": "^2.1.16"
+    "requirejs": "^2.1.12"
   },
   "dependencies": {
     "lodash": "^3.5.0"

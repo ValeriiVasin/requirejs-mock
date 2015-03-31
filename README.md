@@ -220,6 +220,9 @@ afterEach(function() {
 });
 ```
 
+# RequireJS versions support
+`requirejs-mock` supports RequireJS versions starting from **2.1.12**. Previous versions are **not supported**.
+
 # Changelog
 **1.0.0 -** Mar. 22, 2015
 
