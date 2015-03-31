@@ -1,5 +1,7 @@
 node_modules
 spec
+coverage
 .eslintignore
 .eslintrc
 .jscsrc
+npm-debug.log
