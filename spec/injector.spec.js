@@ -44,20 +44,14 @@ describe('Injector', function() {
   });
 
   describe('Contstructor', function() {
-    beforeEach(function() {
-      Injector.requirejs = null;
-    });
-
-    afterEach(function() {
-      Injector.requirejs = requirejs;
-    });
-
     it('should throw if requirejs has not been provided', function() {
       function initInjector() {
-        return Injector.create();
+        Injector.requirejs = null;
+        Injector.create();
       }
 
       expect(initInjector).toThrow();
+      Injector.provide(requirejs);
     });
 
     it('should throw if we are going to use non-exited context for injector', function() {
