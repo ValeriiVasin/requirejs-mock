@@ -83,7 +83,9 @@ beforeEach(function() {
 
 ### mock()
 Replaces module value with provided one.
+
 **injector.mock(name, value)** - mock single module
+
 **injector.mock(Object(name: value))** - mock few modules
 
 It's possible to provide any value (function, object, number, string, etc) as a result for the mocked module.
@@ -112,6 +114,7 @@ describe('Mocks', function() {
 
 ### unmock()
 **injector.unmock(...name)** - Remove mocks for one or few modules
+
 **injector.unmock()** - Remove mocks for all modules mocked before
 
 If you don't need a mock anymore it's possible to remove it. Original module value will be returned afterwards if you require the module.
@@ -130,6 +133,7 @@ injector.unmock();
 ## Maps
 ### Setup maps
 **injector.map(name, replacerName)** - map module `name` to module `replacerName`
+
 **injector.map(Object(name, replacerName))** - map few modules to replacements
 
 If you have a module mock in a separate file and just need to replace module with it - you should use module mapping. Notice that the `replacer` module should also be an **AMD** module.
@@ -184,6 +188,10 @@ beforeEach(function() {
 ```
 
 ### Cleanup maps
+**injector.unmap(...name)** - Remove mapping from module or few modules
+
+**injector.unmap()** - Remove mappings from all previously mapped modules
+
 If you need to get an original module instead of mapped mock - you could `unmap` the module.
 
 ```js
