@@ -244,9 +244,11 @@ afterEach(function() {
 
 # Changelog
 **1.0.1 -** Apr. 04, 2015
+
 Provide additional documentation.
 
 **1.0.0 -** Mar. 22, 2015
+
 First stable release that supports all planned injector features.
 
 * **[breaking]** It's not possible to `mock()` and `map()` module at the same time. Previous behavior was not specified
@@ -254,5 +256,6 @@ First stable release that supports all planned injector features.
 * Added ability to remove module from RequireJS cache
 
 **0.9.0 -** Mar. 16, 2015
+
 Initial release with basic capabilities
 
