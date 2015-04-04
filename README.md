@@ -54,23 +54,85 @@ describe('Test', function() {
 First of all you need to create an injector that will allow you to mock your modules dependencies.
 
 ```js
+// Get RequireJS instance
 var requirejs = require('requirejs');
 
-// Get Injector and provide requirejs to it
+// Get Injector and provide RequireJS to it
 var Injector = require('requirejs-mock').provide(requirejs);
 
 beforeEach(function() {
-  // instantiate injector (default context)
+  // instantiate injector
   var injector = Injector.create();
 
-  // instantiate injector for non-default context
+  // instantiate injector for non-default context (if such is configured for RequireJS)
   var otherInjector = Injector.create({ context: 'specs' });
 });
 ```
 
+## Require
+**injector.require(name)** - require the module. Module value will be returned.
+
+```js
+var moduleA;
+beforeEach(function() {
+  moduleA = injector.require('module/a');
+});
+```
+
+## Mocks
+
+### mock()
+Replaces module value with provided one.
+**injector.mock(name, value)** - mock single module
+**injector.mock(Object(name: value))** - mock few modules
+
+It's possible to provide any value (function, object, number, string, etc) as a result for the mocked module.
+
+```js
+describe('Mocks', function() {
+  beforeEach(function() {
+    // provide a value that will be returned as a module
+    injector.mock('module/a', valueA);
+    injector.mock('module/b', valueB);
+
+    injector.mock({
+      'module/a': valueA,
+      'module/b': valueB
+    });
+  });
+
+  it('should work', function() {
+    expect(injector.require('module/a')).toBe(valueA);
+    expect(injector.require('module/b')).toBe(valueB);
+  });
+});
+```
+**Notice:** It's not possible to use `injector.mock()` and `injector.map()` for same module at a time.
+**Notice:** It's not possible to mock module that has been mocked before.
+
+### unmock()
+**injector.unmock(...name)** - Remove mocks for one or few modules
+**injector.unmock()** - Remove mocks for all modules mocked before
+
+If you don't need a mock anymore it's possible to remove it. Original module value will be returned afterwards if you require the module.
+
+```js
+// Unmock single module
+injector.unmock('module/a');
+
+// Unmock few modules at once
+injector.unmock('module/a', 'module/b');
+
+// Unmock all previiously mocked modules
+injector.unmock();
+```
+
 ## Maps
 ### Setup maps
-If you have a module mock in a separate file and just need to replace module with it - you should use module mapping.
+**injector.map(name, replacerName)** - map module `name` to module `replacerName`
+**injector.map(Object(name, replacerName))** - map few modules to replacements
+
+If you have a module mock in a separate file and just need to replace module with it - you should use module mapping. Notice that the `replacer` module should also be an **AMD** module.
 
 ```js
 beforeEach(function() {
@@ -137,49 +199,8 @@ injector.unmap();
 
 **Notice:** It's not possible to use `injector.mock()` and `injector.map()` for module at the same time.
 
-## Mocks
-
-### Setup mocks
-If you do not have a prepared module mock in a separate file and want to do it in the runtime - you could use mocks. It's possible to provide any value (function, object, number, string, etc) as a result for the mocked module.
-
-```js
-describe('Mocks', function() {
-  beforeEach(function() {
-    // provide a value that will be returned as a module
-    injector.mock('module/a', valueA);
-    injector.mock('module/b', valueB);
-
-    injector.mock({
-      'module/a': valueA,
-      'module/b': valueB
-    });
-  });
-
-  it('should work', function() {
-    expect(injector.require('module/a')).toBe(valueA);
-    expect(injector.require('module/b')).toBe(valueB);
-  });
-});
-```
-**Notice:** It's not possible to use `injector.mock()` and `injector.map()` for module at the same time.
-**Notice:** It's not possible to mock module that has been mocked before.
-
-### Cleanup mocks
-If you don't need a mock anymore it's possible to remove it. Afterwards original module value will be returned if you require the module.
-
-```js
-// Unmock single module
-injector.unmock('module/a');
-
-// Unmock few modules at once
-injector.unmock('module/a', 'module/b');
-
-// Unmock all previiously mocked modules
-injector.unmock();
-```
-
 # Undefining a module
-When you require a module - RequireJS will automatically cache it with all dependencies. If you need to provide another dependency mocks you should undefine module and then get fresh copy of module.
+When you `require()` a module - RequireJS will automatically cache it with all dependencies. If you need to provide another dependencies mocks you should undefine module and then `require()` module again.
 
 ```js
 // Assume that you have module C that depends on module A and B
@@ -197,7 +218,7 @@ injector.undef('module/c');
 c = injector.require('module/c');
 ```
 
-**Notice:** During the mock setup - module cache will be removed automatically for you and mocked module value will be returned afterwards, as expected.
+**Notice:** If you're using `mock()` module cache will be removed automatically for you and mocked module value will be returned afterwards, as expected.
 
 ```js
 // get original A value
