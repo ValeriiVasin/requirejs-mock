@@ -200,6 +200,9 @@ Injector.prototype.mock = function(id, value) {
   // add to mocked list
   this._mocked[id] = true;
 
+  this.context.defined[id] = value;
+  return this;
+
   /**
    * Requirejs.define register module in global queue.
    *
@@ -284,6 +287,11 @@ Injector.prototype.undef = function() {
     if (this._isMocked(id)) {
       this.unmock(id);
     }
+
+    delete this.context.defined[id];
+
+    // fails for browsers
+    return;
 
     this.context.require.undef(id);
   }, this);
