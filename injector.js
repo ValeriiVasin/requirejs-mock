@@ -261,7 +261,7 @@ Injector.prototype.unmock = function(ids) {
 
   ids.forEach(function(id) {
     delete this._mocked[id];
-    this.context.require.undef(id);
+    delete this.context.defined[id];
 
     // restore mocked maps
     if (this._mockedMaps[id]) {
@@ -291,11 +291,10 @@ Injector.prototype.undef = function() {
       this.unmock(id);
     }
 
-    delete this.context.defined[id];
-
     // fails for browsers
     // return;
 
+    // remove from cache
     this.context.require.undef(id);
   }, this);
 
@@ -307,6 +306,7 @@ Injector.prototype.undef = function() {
  */
 Injector.prototype.destroy = function() {
   delete Injector.requirejs.s.contexts[this._contextName];
+  return this;
 };
 
 /**
@@ -352,7 +352,9 @@ Injector.Util.createContext = function(contextName, options) {
   Injector.requirejs.config(assign(
     {},
     Injector.Util.getContext(options.extend).config,
-    { context: contextName, __originalContext: options.extend }
+
+    // redefine context name, clear deps and replace callback
+    { context: contextName, deps: [], callback: function() {} }
   ));
 
   return Injector.Util.getContext(contextName);
