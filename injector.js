@@ -1,13 +1,16 @@
 'use strict';
 
-var _ = require('lodash');
+var toArray = require('lodash.toarray');
+var assign = require('lodash.assign');
+var uniqueId = require('lodash.uniqueid');
+var forEach = require('lodash.foreach');
 
 function Injector(options) {
   Injector._ensureRequireJS();
 
-  this.options = _.extend({ context: Injector.DEFAULT_CONTEXT }, options || {});
+  this.options = assign({ context: Injector.DEFAULT_CONTEXT }, options || {});
 
-  this._contextName = _.uniqueId('__MockContext__');
+  this._contextName = uniqueId('__MockContext__');
 
   // create new context based on provided to prent modifications
   this.context = Injector.Util.createContext(
@@ -36,7 +39,7 @@ function Injector(options) {
   // Mapping config for all modules (*).
   // Changes in this config will be reflected in context using _applyMaps()
   // Notice: copied from original to prevent its changes
-  this._maps = _.extend({}, this.context.config.map['*']);
+  this._maps = assign({}, this.context.config.map['*']);
 
   // store for mocked modules ids
   // is needed to determine is module mocked or not
@@ -65,7 +68,7 @@ Injector.DEFAULT_CONTEXT = '_';
 Injector.prototype.map = function(id, mockId) {
   // Support object notation
   if (id && typeof id === 'object') {
-    _.each(id, function(value, key) {
+    forEach(id, function(value, key) {
       this.map(key, value);
     }, this);
 
@@ -117,12 +120,12 @@ Injector.prototype._isMapped = function(id) {
 Injector.prototype.unmap = function(ids) {
   if (typeof ids === 'undefined') {
     // restore all
-    this._maps = _.extend({}, this._originalMaps);
+    this._maps = assign({}, this._originalMaps);
     this._applyMaps();
     return this;
   }
 
-  ids = _.toArray(arguments);
+  ids = toArray(arguments);
 
   ids.forEach(function(id) {
     this._maps[id] = this._originalMaps[id];
@@ -169,7 +172,7 @@ Injector.prototype.mock = function(id, value) {
 
   // Support object notation
   if (id && typeof id === 'object') {
-    _.each(id, function(value, key) {
+    forEach(id, function(value, key) {
       this.mock(key, value);
     }, this);
 
@@ -247,14 +250,14 @@ Injector.prototype._isMocked = function(id) {
 Injector.prototype.unmock = function(ids) {
   if (typeof ids === 'undefined') {
     // unmock all
-    _.each(this._mocked, function(value, key) {
+    forEach(this._mocked, function(value, key) {
       this.unmock(key);
     }, this);
 
     return this;
   }
 
-  ids = _.toArray(arguments);
+  ids = toArray(arguments);
 
   ids.forEach(function(id) {
     delete this._mocked[id];
@@ -280,7 +283,7 @@ Injector.prototype.require = function() {
  * @return {Injector}       Injector instance
  */
 Injector.prototype.undef = function() {
-  var ids = _.toArray(arguments);
+  var ids = toArray(arguments);
 
   ids.forEach(function(id) {
     // remove mock if module has been mocked before
@@ -291,7 +294,7 @@ Injector.prototype.undef = function() {
     delete this.context.defined[id];
 
     // fails for browsers
-    return;
+    // return;
 
     this.context.require.undef(id);
   }, this);
@@ -346,7 +349,7 @@ Injector.Util.createContext = function(contextName, options) {
   }
 
   // create new requirejs context based on provided
-  Injector.requirejs.config(_.extend(
+  Injector.requirejs.config(assign(
     {},
     Injector.Util.getContext(options.extend).config,
     { context: contextName, __originalContext: options.extend }
