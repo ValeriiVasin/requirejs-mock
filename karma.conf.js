@@ -19,8 +19,12 @@ module.exports = function(config) {
       'injector.build.js',
       'test/karma/post.js',
 
-      'test/karma/main.js',
+      'test/karma/configure.js',
       'test/karma/spec/*.spec.js',
+
+      'spec/constructor.spec.js',
+      'spec/context.spec.js',
+      'spec/paths.spec.js',
 
       { pattern: 'spec/fixtures/**/*.js', included: false }
     ],

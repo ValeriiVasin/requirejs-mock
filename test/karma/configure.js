@@ -1,7 +1,7 @@
-var requirejs = require('requirejs');
-var Injector = require('../../injector').provide(requirejs);
+// Karma serves files under /base, which is the basePath from your config file
+var REQUIREJS_BASE_URL = '/base/spec/fixtures/';
 
-var REQUIREJS_BASE_URL = 'spec/fixtures/';
+Injector.provide(require);
 
 function configure(requirejs, baseUrl) {
   requirejs.config({
@@ -33,8 +33,9 @@ function configure(requirejs, baseUrl) {
   });
 }
 
-configure(requirejs, REQUIREJS_BASE_URL);
+configure(require, REQUIREJS_BASE_URL);
 
+// Helpers
 beforeEach(function() {
   this.Injector = Injector;
 
@@ -46,7 +47,7 @@ beforeEach(function() {
   /**
    * Requires modules using the injector and checks afterwards
    *
-   * for Node env it is sync
+   * for Browser env it is async
    *
    * @param  {Injector} injector Injector instance
    * @param  {Object} mapping    Module/value mapping
@@ -54,11 +55,17 @@ beforeEach(function() {
    */
   this.requireAndCheck = function(injector, mapping) {
     return new Promise(function(resolve) {
-      Object.keys(mapping).forEach(function(module) {
-        expect(injector.require(module)).toBe(mapping[module]);
-      });
+      var modules = Object.keys(mapping);
 
-      resolve();
+      injector.require(modules, function() {
+        var values = Array.prototype.slice.call(arguments);
+
+        modules.forEach(function(module, index) {
+          expect(values[index]).toBe(mapping[modules[index]]);
+        });
+
+        resolve();
+      });
     });
   };
 });
@@ -68,3 +75,6 @@ afterEach(function() {
   this.injectorWithMap.destroy();
   this.injectorWithPath.destroy();
 });
+
+// let other files to load
+setTimeout(window.__karma__.start, 0);
