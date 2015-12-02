@@ -1,50 +1,67 @@
 describe('Map', function() {
-  it('single module mapping', function() {
+  it('single module mapping', function(done) {
     this.injector.map('module/a', 'mock/a');
-    expect(this.injector.require('module/a')).toBe('mockA');
+
+    this.requireAndCheck(this.injector, {
+      'module/a': 'mockA'
+    }).then(done);
   });
 
-  it('multiple modules mapping', function() {
+  it('multiple modules mapping', function(done) {
     this.injector.map({
       'module/a': 'mock/a',
       'module/b': 'mock/b'
     });
 
-    expect(this.injector.require('module/a')).toBe('mockA');
-    expect(this.injector.require('module/b')).toBe('mockB');
+    this.requireAndCheck(this.injector, {
+      'module/a': 'mockA',
+      'module/b': 'mockB'
+    }).then(done);
   });
 
-  it('not overrides existed mapping', function() {
+  it('not overrides existed mapping', function(done) {
     this.injectorWithMap.map('module/b', 'mock/b');
 
-    expect(this.injectorWithMap.require('module/a')).toBe('mockA');
-    expect(this.injectorWithMap.require('module/b')).toBe('mockB');
+    this.requireAndCheck(this.injectorWithMap, {
+      'module/a': 'mockA',
+      'module/b': 'mockB'
+    }).then(done);
   });
 
-  it('allows remap during the execution', function() {
+  it('allows remap during the execution', function(done) {
     this.injector.map('module/a', 'mock/a');
-    expect(this.injector.require('module/a')).toBe('mockA');
 
-    this.injector.map('module/a', 'mock/b');
-    expect(this.injector.require('module/a')).toBe('mockB');
+    this.requireAndCheck(this.injector, {
+      'module/a': 'mockA'
+    }).then(function() {
+      this.injector.map('module/a', 'mock/b');
+
+      return this.requireAndCheck(this.injector, {
+        'module/a': 'mockB'
+      });
+    }.bind(this)).then(done);
   });
 
-  it('works on nested require calls', function() {
+  it('works on nested require calls', function(done) {
     this.injector.map({
       'module/a': 'mock/a',
       'module/b': 'mock/b'
     });
 
-    expect(this.injector.require('module/c')).toBe('mockAmockB');
+    this.requireAndCheck(this.injector, {
+      'module/c': 'mockAmockB'
+    }).then(done);
   });
 
-  it('works on nested require calls with relative path', function() {
+  it('works on nested require calls with relative path', function(done) {
     this.injector.map({
       'module/a': 'mock/a',
       'module/b': 'mock/b'
     });
 
-    expect(this.injector.require('module/c_local')).toBe('mockAmockB');
+    this.requireAndCheck(this.injector, {
+      'module/c_local': 'mockAmockB'
+    }).then(done);
   });
 
   it('throws if trying to map mocked before module', function() {

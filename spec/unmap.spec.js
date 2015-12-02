@@ -1,19 +1,31 @@
 describe('Unmap', function() {
-  it('unmap', function() {
+  it('unmap', function(done) {
     this.injector.map('module/b', 'mock/b');
-    expect(this.injector.require('module/b')).toBe('mockB');
-    this.injector.unmap('module/b');
-    expect(this.injector.require('module/b')).toBe('b');
+    this.requireAndCheck(this.injector, {
+      'module/b': 'mockB'
+    }).then(function() {
+      this.injector.unmap('module/b');
+
+      return this.requireAndCheck(this.injector, {
+        'module/b': 'b'
+      });
+    }.bind(this)).then(done);
   });
 
-  it('unmap to original mapping', function() {
+  it('unmap to original mapping', function(done) {
     this.injectorWithMap.map('module/a', 'mock/b');
-    expect(this.injectorWithMap.require('module/a')).toBe('mockB');
-    this.injectorWithMap.unmap('module/a');
-    expect(this.injectorWithMap.require('module/a')).toBe('mockA');
+    this.requireAndCheck(this.injectorWithMap, {
+      'module/a': 'mockB'
+    }).then(function() {
+      this.injectorWithMap.unmap('module/a');
+
+      return this.requireAndCheck(this.injectorWithMap, {
+        'module/a': 'mockA'
+      });
+    }.bind(this)).then(done);
   });
 
-  it('unmap few modules at once', function() {
+  it('unmap few modules at once', function(done) {
     this.injector.map({
       'module/a': 'mock/a',
       'module/b': 'mock/b'
@@ -21,11 +33,13 @@ describe('Unmap', function() {
 
     this.injector.unmap('module/a', 'module/b');
 
-    expect(this.injector.require('module/a')).toBe('a');
-    expect(this.injector.require('module/b')).toBe('b');
+    this.requireAndCheck(this.injector, {
+      'module/a': 'a',
+      'module/b': 'b'
+    }).then(done);
   });
 
-  it('unmap all previously mapped modules', function() {
+  it('unmap all previously mapped modules', function(done) {
     this.injector.map({
       'module/a': 'mock/a',
       'module/b': 'mock/b'
@@ -33,7 +47,9 @@ describe('Unmap', function() {
 
     this.injector.unmap();
 
-    expect(this.injector.require('module/a')).toBe('a');
-    expect(this.injector.require('module/b')).toBe('b');
+    this.requireAndCheck(this.injector, {
+      'module/a': 'a',
+      'module/b': 'b'
+    }).then(done);
   });
 });

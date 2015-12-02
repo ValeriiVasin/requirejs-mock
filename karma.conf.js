@@ -15,16 +15,13 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'test/karma/pre.js',
+      'test/karma/save-define.js',
       'injector.build.js',
-      'test/karma/post.js',
+      'node_modules/es6-promise/dist/es6-promise.js',
+      'test/karma/restore-define.js',
 
       'test/karma/configure.js',
-      'test/karma/spec/*.spec.js',
-
-      'spec/constructor.spec.js',
-      'spec/context.spec.js',
-      'spec/paths.spec.js',
+      'spec/*.spec.js',
 
       { pattern: 'spec/fixtures/**/*.js', included: false }
     ],
@@ -66,7 +63,7 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Chrome'/*, 'Firefox'*/],
+    browsers: ['PhantomJS2'],
 
 
     // Continuous Integration mode
@@ -75,6 +72,17 @@ module.exports = function(config) {
 
     // Concurrency level
     // how many browser should be started simultanous
-    concurrency: Infinity
+    concurrency: Infinity,
+
+    // phantomjsLauncher: {
+    //   // Have phantomjs exit if a ResourceError is encountered (useful if karma exits without killing phantom)
+    //   exitOnResourceError: true
+    // },
+
+    plugins: [
+      'karma-jasmine',
+      'karma-requirejs',
+      'karma-phantomjs2-launcher'
+    ]
   })
 }

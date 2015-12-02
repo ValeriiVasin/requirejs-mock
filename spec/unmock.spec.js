@@ -7,32 +7,40 @@ describe('Unmock', function() {
     });
   });
 
-  it('unmock module value', function() {
+  it('unmock module value', function(done) {
     this.injector.unmock('module/a');
 
-    expect(this.injector.require('module/a')).toBe('a');
+    this.requireAndCheck(this.injector, {
+      'module/a': 'a'
+    }).then(done);
   });
 
-  it('unmock few modules', function() {
+  it('unmock few modules', function(done) {
     this.injector.unmock('module/a', 'module/b');
 
-    expect(this.injector.require('module/a')).toBe('a');
-    expect(this.injector.require('module/b')).toBe('b');
-    expect(this.injector.require('module/c')).toBe(678);
+    this.requireAndCheck(this.injector, {
+      'module/a': 'a',
+      'module/b': 'b',
+      'module/c': 678
+    }).then(done);
   });
 
-  it('unmock all mocked modules', function() {
+  it('unmock all mocked modules', function(done) {
     this.injector.unmock();
 
-    expect(this.injector.require('module/a')).toBe('a');
-    expect(this.injector.require('module/b')).toBe('b');
-    expect(this.injector.require('module/c')).toBe('ab');
+    this.requireAndCheck(this.injector, {
+      'module/a': 'a',
+      'module/b': 'b',
+      'module/c': 'ab'
+    }).then(done);
   });
 
-  it('unmock mapped module', function() {
+  it('unmock mapped module', function(done) {
     this.injectorWithMap.mock('module/a', 123);
     this.injectorWithMap.unmock('module/a');
 
-    expect(this.injectorWithMap.require('module/a')).toBe('mockA');
+    this.requireAndCheck(this.injectorWithMap, {
+      'module/a': 'mockA'
+    }).then(done);
   });
 });

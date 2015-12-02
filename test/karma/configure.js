@@ -35,6 +35,9 @@ function configure(requirejs, baseUrl) {
 
 configure(require, REQUIREJS_BASE_URL);
 
+// enable es6 Promise polyfill for PhantomJS2
+ES6Promise.polyfill();
+
 // Helpers
 beforeEach(function() {
   this.Injector = Injector;

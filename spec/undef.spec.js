@@ -1,18 +1,24 @@
 describe('Undef', function() {
-  it('undef one module', function() {
+  it('undef one module', function(done) {
     // module/c will be cached
-    expect(this.injector.require('module/c')).toBe('ab');
+    this.requireAndCheck(this.injector, {
+      'module/c': 'ab'
+    }).then(function() {
+      this.injector.map('module/a', 'mock/a');
+      this.injector.map('module/b', 'mock/b');
 
-    this.injector.map('module/a', 'mock/a');
-    this.injector.map('module/b', 'mock/b');
+      // from cache
+      return this.requireAndCheck(this.injector, {
+        'module/c': 'ab'
+      });
+    }.bind(this)).then(function() {
+      // remove from cache
+      this.injector.undef('module/c');
 
-    // from cache
-    expect(this.injector.require('module/c')).toBe('ab');
-
-    // remove from cache
-    this.injector.undef('module/c');
-
-    expect(this.injector.require('module/c')).toBe('mockAmockB');
+      return this.requireAndCheck(this.injector, {
+        'module/c': 'mockAmockB'
+      });
+    }.bind(this)).then(done);
   });
 
   it('undef few modules at once', function() {

@@ -1,49 +1,67 @@
 describe('Mock', function() {
-  it('mock with a simple value', function() {
+  it('mock with a simple value', function(done) {
     this.injector.mock('module/a', 15);
-    expect(this.injector.require('module/a')).toBe(15);
+
+    this.requireAndCheck(this.injector, {
+      'module/a': 15
+    }).then(done);
   });
 
-  it('nested requires with simple value', function() {
+  it('nested requires with simple value', function(done) {
     this.injector.mock('module/a', 'A');
     this.injector.mock('module/b', 'B');
 
-    expect(this.injector.require('module/c')).toBe('AB');
+    this.requireAndCheck(this.injector, {
+      'module/c': 'AB'
+    }).then(done);
   });
 
-  it('mock different contexts at a time', function() {
+  it('mock different contexts at a time', function(done) {
     this.injector.mock('module/a', 'A');
     this.injector.mock('module/b', 'B');
 
     this.otherInjector.mock('module/a', 'C');
     this.otherInjector.mock('module/b', 'D');
 
-    expect(this.injector.require('module/c')).toBe('AB');
-    expect(this.otherInjector.require('module/c')).toBe('CD');
+    this.requireAndCheck(this.injector, {
+      'module/c': 'AB'
+    }).then(function() {
+      return this.requireAndCheck(this.otherInjector, {
+        'module/c': 'CD'
+      });
+    }.bind(this)).then(done);
   });
 
-  it('mock with an object', function() {
+  it('mock with an object', function(done) {
     var obj = { toString: function() { return 'O'; } };
 
     this.injector.mock('module/a', obj);
-    expect(this.injector.require('module/a')).toBe(obj);
+
+    this.requireAndCheck(this.injector, {
+      'module/a': obj
+    }).then(done);
   });
 
-  it('mock with a function', function() {
+  it('mock with a function', function(done) {
     function f() {}
 
     this.injector.mock('module/a', f);
-    expect(this.injector.require('module/a')).toBe(f);
+
+    this.requireAndCheck(this.injector, {
+      'module/a': f
+    }).then(done);
   });
 
-  it('supports multiple mocks notations', function() {
+  it('supports multiple mocks notations', function(done) {
     this.injector.mock({
       'module/a': 'hello',
       'module/b': 'world'
     });
 
-    expect(this.injector.require('module/a')).toBe('hello');
-    expect(this.injector.require('module/b')).toBe('world');
+    this.requireAndCheck(this.injector, {
+      'module/a': 'hello',
+      'module/b': 'world'
+    }).then(done);
   });
 
   it('throws error if incorrect mock syntax is used for mock', function() {
@@ -54,9 +72,12 @@ describe('Mock', function() {
     expect(createMock.bind(this)).toThrow();
   });
 
-  it('mock mapped (by configuration) modules', function() {
+  it('mock mapped (by configuration) modules', function(done) {
     this.injectorWithMap.mock('module/a', 123);
-    expect(this.injectorWithMap.require('module/a')).toBe(123);
+
+    this.requireAndCheck(this.injectorWithMap, {
+      'module/a': 123
+    }).then(done);
   });
 
   it('throws if mocking module that previously mocked', function() {
@@ -77,11 +98,16 @@ describe('Mock', function() {
     expect(mapAndMock.bind(this)).toThrow();
   });
 
-  it('mock module cached before', function() {
+  it('mock module cached before', function(done) {
     // cache module
-    this.injector.require('module/a');
-    this.injector.mock('module/a', 123);
+    this.requireAndCheck(this.injector, {
+      'module/a': 'a'
+    }).then(function() {
+      this.injector.mock('module/a', 123);
 
-    expect(this.injector.require('module/a')).toBe(123);
+      return this.requireAndCheck(this.injector, {
+        'module/a': 123
+      });
+    }.bind(this)).then(done);
   });
 });
