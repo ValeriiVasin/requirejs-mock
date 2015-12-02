@@ -4,6 +4,7 @@
   "description": "Dependency injector for RequireJS modules.",
   "main": "index.js",
   "scripts": {
+    "build": "./node_modules/webpack/bin/webpack.js",
     "test": "node ./node_modules/jasmine/bin/jasmine",
     "test-karma": "./node_modules/karma/bin/karma start --single-run",
     "lint": "node node_modules/eslint/bin/eslint . && node node_modules/jscs/bin/jscs .",
@@ -36,13 +37,11 @@
     "karma-jasmine": "^0.3.6",
     "karma-phantomjs2-launcher": "^0.3.2",
     "karma-requirejs": "^0.2.2",
-    "requirejs": "^2.1.12",
-    "webpack": "^1.12.9"
-  },
-  "dependencies": {
     "lodash.assign": "^3.2.0",
     "lodash.foreach": "^3.0.3",
     "lodash.toarray": "^3.0.2",
-    "lodash.uniqueid": "^3.0.0"
+    "lodash.uniqueid": "^3.0.0",
+    "requirejs": "^2.1.12",
+    "webpack": "^1.12.9"
   }
 }

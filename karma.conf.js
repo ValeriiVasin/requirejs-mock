@@ -15,12 +15,12 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'test/karma/save-define.js',
-      'injector.build.js',
+      'karma/save-define.js',
+      'build/injector.js',
       'node_modules/es6-promise/dist/es6-promise.js',
-      'test/karma/restore-define.js',
+      'karma/restore-define.js',
 
-      'test/karma/configure.js',
+      'karma/configure.js',
       'spec/*.spec.js',
 
       { pattern: 'spec/fixtures/**/*.js', included: false }
@@ -74,10 +74,10 @@ module.exports = function(config) {
     // how many browser should be started simultanous
     concurrency: Infinity,
 
-    // phantomjsLauncher: {
-    //   // Have phantomjs exit if a ResourceError is encountered (useful if karma exits without killing phantom)
-    //   exitOnResourceError: true
-    // },
+    phantomjsLauncher: {
+      // Have phantomjs exit if a ResourceError is encountered (useful if karma exits without killing phantom)
+      exitOnResourceError: true
+    },
 
     plugins: [
       'karma-jasmine',

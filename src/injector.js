@@ -291,9 +291,6 @@ Injector.prototype.undef = function() {
       this.unmock(id);
     }
 
-    // fails for browsers
-    // return;
-
     // remove from cache
     this.context.require.undef(id);
   }, this);
@@ -354,6 +351,9 @@ Injector.Util.createContext = function(contextName, options) {
     Injector.Util.getContext(options.extend).config,
 
     // redefine context name, clear deps and replace callback
+    // Note:
+    // callback / deps should not be used for mock contexts to prevent their calls after the .config() call
+    // There was an issue with window.__karma__start callback that was called called more then once for async tests
     { context: contextName, deps: [], callback: function() {} }
   ));
 

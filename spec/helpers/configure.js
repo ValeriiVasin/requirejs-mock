@@ -1,5 +1,5 @@
 var requirejs = require('requirejs');
-var Injector = require('../../injector').provide(requirejs);
+var Injector = require('../../build/injector').provide(requirejs);
 
 var REQUIREJS_BASE_URL = 'spec/fixtures/';
 
