@@ -3,7 +3,7 @@ module.exports = {
     'injector': './src/injector'
   },
   output: {
-    path: 'build',
+    path: 'dist',
     filename: '[name].js',
     library: 'Injector',
     libraryTarget: 'umd'

@@ -16,7 +16,7 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       'karma/save-define.js',
-      'build/injector.js',
+      'dist/injector.js',
       'node_modules/es6-promise/dist/es6-promise.js',
       'karma/restore-define.js',
 
