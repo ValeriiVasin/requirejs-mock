@@ -15,6 +15,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
+      'karma/bind-polyfill.js',
       'karma/save-define.js',
       'dist/injector.js',
       'node_modules/es6-promise/dist/es6-promise.js',
@@ -63,7 +64,7 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['PhantomJS2'],
+    browsers: ['PhantomJS'],
 
 
     // Continuous Integration mode
@@ -82,7 +83,7 @@ module.exports = function(config) {
     plugins: [
       'karma-jasmine',
       'karma-requirejs',
-      'karma-phantomjs2-launcher'
+      'karma-phantomjs-launcher'
     ]
   })
 }
