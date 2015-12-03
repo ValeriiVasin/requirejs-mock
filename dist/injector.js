@@ -259,25 +259,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  this._mocked[id] = true;
 
 	  this.context.defined[id] = value;
-	  return this;
-
-	  /**
-	   * Requirejs.define register module in global queue.
-	   *
-	   * See:
-	   * https://github.com/jrburke/requirejs/blob/dbcfc05df1cec15768a79f12b67c1824c1c484eb/require.js#L2062
-	   */
-	  Injector.requirejs.define(id, function () {
-	    return value;
-	  });
-
-	  // Require it from global context to current context
-	  // Should be called here - otherwice module will be registered in first context
-	  // that will require it (lazy initialization)
-	  //
-	  // See:
-	  // https://github.com/jrburke/requirejs/blob/dbcfc05df1cec15768a79f12b67c1824c1c484eb/require.js#L1230
-	  this.require(id);
 
 	  return this;
 	};
