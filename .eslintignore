@@ -1,2 +1,7 @@
 node_modules
 spec/fixtures
+coverage
+dist
+karma/bind-polyfill.js
+karma/save-define.js
+karma/restore-define.js

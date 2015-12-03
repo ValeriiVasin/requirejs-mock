@@ -1,3 +1,7 @@
+'use strict';
+
+/*global Injector,ES6Promise*/
+
 // Karma serves files under /base, which is the basePath from your config file
 var REQUIREJS_BASE_URL = '/base/spec/fixtures/';
 

@@ -1,3 +1,5 @@
+'use strict';
+
 describe('Mock', function() {
   it('mock with a simple value', function(done) {
     this.injector.mock('module/a', 15);
@@ -33,7 +35,11 @@ describe('Mock', function() {
   });
 
   it('mock with an object', function(done) {
-    var obj = { toString: function() { return 'O'; } };
+    var obj = {
+      toString: function() {
+        return 'O';
+      }
+    };
 
     this.injector.mock('module/a', obj);
 

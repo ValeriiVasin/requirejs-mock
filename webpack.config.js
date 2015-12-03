@@ -1,6 +1,8 @@
+'use strict';
+
 module.exports = {
   entry: {
-    'injector': './src/injector'
+    injector: './src/injector'
   },
   output: {
     path: 'dist',

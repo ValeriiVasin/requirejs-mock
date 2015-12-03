@@ -1,3 +1,5 @@
+'use strict';
+
 describe('Contstructor', function() {
   it('should throw if requirejs has not been provided', function() {
     var _requirejs;

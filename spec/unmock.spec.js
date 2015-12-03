@@ -1,9 +1,11 @@
+'use strict';
+
 describe('Unmock', function() {
   beforeEach(function() {
     this.injector.mock({
-        'module/a': 123,
-        'module/b': 345,
-        'module/c': 678
+      'module/a': 123,
+      'module/b': 345,
+      'module/c': 678
     });
   });
 

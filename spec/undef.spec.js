@@ -1,3 +1,5 @@
+'use strict';
+
 describe('Undef', function() {
   it('undef one module', function(done) {
     // module/c will be cached

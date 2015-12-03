@@ -1,21 +1,11 @@
 {
+    // Parse ES6
+    "esnext": true,
+
     // These rules don't exist on ESLint yet
     "disallowSpacesInsideArrayBrackets": true,
-    "requireSpacesInsideObjectBrackets": "all",
     "requireSpacesInForStatement": true,
     "requireSpaceBeforeBinaryOperators": true,
     "requireSpaceAfterBinaryOperators": true,
-    "requireSpacesInConditionalExpression": true,
-    "requireBlocksOnNewline": 1,
-    "validateLineBreaks": "LF",
-    "disallowSpacesInAnonymousFunctionExpression": {
-        "beforeOpeningRoundBrace": true
-    },
-    "validateIndentation": 2,
-    "safeContextKeyword": "that",
-
-    "excludeFiles": [
-        "node_modules/**",
-        "spec/fixtures/**"
-    ]
+    "requireSpacesInConditionalExpression": true
 }

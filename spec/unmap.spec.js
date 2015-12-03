@@ -1,3 +1,5 @@
+'use strict';
+
 describe('Unmap', function() {
   it('unmap', function(done) {
     this.injector.map('module/b', 'mock/b');

@@ -1,3 +1,5 @@
+'use strict';
+
 // Karma configuration
 // Generated on Mon Nov 30 2015 17:49:34 GMT+0100 (CET)
 
@@ -85,5 +87,5 @@ module.exports = function(config) {
       'karma-requirejs',
       'karma-phantomjs-launcher'
     ]
-  })
-}
+  });
+};

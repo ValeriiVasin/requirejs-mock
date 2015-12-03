@@ -1,3 +1,5 @@
+'use strict';
+
 describe('Map', function() {
   it('single module mapping', function(done) {
     this.injector.map('module/a', 'mock/a');

@@ -1,3 +1,5 @@
+'use strict';
+
 describe('Context', function() {
   it('should allow different contexts', function(done) {
     Promise.all([
