@@ -4,7 +4,7 @@
   "description": "Dependency injector for RequireJS modules.",
   "main": "index.js",
   "scripts": {
-    "build": "./node_modules/webpack/bin/webpack.js",
+    "dist": "./node_modules/webpack/bin/webpack.js",
     "test": "npm run test:jasmine && npm run test:karma",
     "test:jasmine": "node ./node_modules/jasmine/bin/jasmine",
     "test:karma": "./node_modules/karma/bin/karma start --single-run",
