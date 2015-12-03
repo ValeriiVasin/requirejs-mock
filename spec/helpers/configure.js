@@ -1,5 +1,8 @@
 'use strict';
 
+// polyfill for node 0.10
+require('es6-promise').polyfill();
+
 var requirejs = require('requirejs');
 var Injector = require('../../dist/injector').provide(requirejs);
 
