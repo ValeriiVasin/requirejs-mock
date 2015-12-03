@@ -1,7 +1,9 @@
-node_modules
-spec
-coverage
+.babelrc
 .eslintignore
 .eslintrc
 .jscsrc
+coverage
+karma
+node_modules
 npm-debug.log
+spec
