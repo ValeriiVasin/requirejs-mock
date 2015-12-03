@@ -40,8 +40,6 @@
     "karma-requirejs": "^0.2.2",
     "lodash.assign": "^3.2.0",
     "lodash.foreach": "^3.0.3",
-    "lodash.toarray": "^3.0.2",
-    "lodash.uniqueid": "^3.0.0",
     "phantomjs": "^1.9.18",
     "requirejs": "^2.1.12",
     "webpack": "^1.12.9"
