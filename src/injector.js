@@ -1,7 +1,14 @@
 'use strict';
 
-import assign from 'lodash.assign';
-import forEach from'lodash.foreach';
+import assign from 'object-assign';
+
+const each = (obj, callback) => {
+  for (let key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      callback(obj[key], key);
+    }
+  }
+};
 
 // Default requirejs context name
 const DEFAULT_CONTEXT = '_';
@@ -66,7 +73,7 @@ class Injector {
   map(id, mockId) {
     // Support object notation
     if (id && typeof id === 'object') {
-      forEach(id, (value, key) => this.map(key, value));
+      each(id, (value, key) => this.map(key, value));
       return this;
     }
 
@@ -160,7 +167,7 @@ class Injector {
 
     // object notation
     if (id && typeof id === 'object') {
-      forEach(id, (value, key) => this.mock(key, value));
+      each(id, (value, key) => this.mock(key, value));
 
       return this;
     }
@@ -219,7 +226,7 @@ class Injector {
     if (ids.length === 0) {
 
       // unmock all
-      forEach(this._mocked, (value, key) => this.unmock(key));
+      each(this._mocked, (value, key) => this.unmock(key));
 
       return this;
     }
