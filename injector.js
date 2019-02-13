@@ -2,14 +2,14 @@
 
 var _ = require('lodash');
 
-function Injector(options) {
+function Injector (options) {
   Injector._ensureRequireJS();
 
-  this.options = _.extend({ context: Injector.DEFAULT_CONTEXT }, options || {});
+  this.options = _.assignIn({ context: Injector.DEFAULT_CONTEXT }, options || {});
 
   this._contextName = _.uniqueId('__MockContext__');
 
-  // create new context based on provided to prent modifications
+  // create new context based on provided to prevent modifications
   this.context = Injector.Util.createContext(
     this._contextName,
     { extend: this.options.context }
@@ -36,7 +36,7 @@ function Injector(options) {
   // Mapping config for all modules (*).
   // Changes in this config will be reflected in context using _applyMaps()
   // Notice: copied from original to prevent its changes
-  this._maps = _.extend({}, this.context.config.map['*']);
+  this._maps = _.assign({}, this.context.config.map['*']);
 
   // store for mocked modules ids
   // is needed to determine is module mocked or not
@@ -62,17 +62,17 @@ Injector.DEFAULT_CONTEXT = '_';
  *     'moduleB': 'mock/moduleB'
  *   });
  */
-Injector.prototype.map = function(id, mockId) {
+Injector.prototype.map = function (id, mockId) {
   // Support object notation
-  if (id && typeof id === 'object') {
-    _.each(id, function(value, key) {
+  if (id && _.isObject(id)) {
+    _.forEach(id, function (value, key) {
       this.map(key, value);
-    }, this);
+    }.bind(this));
 
     return this;
   }
 
-  if (typeof id !== 'string' || typeof mockId !== 'string') {
+  if (!_.isString(id) || !_.isString(mockId)) {
     throw new TypeError('Module ID and mock ID should be a string.');
   }
 
@@ -90,7 +90,7 @@ Injector.prototype.map = function(id, mockId) {
  * Check if module has been mapped by injector
  * @return {Boolean} Check result
  */
-Injector.prototype._isMapped = function(id) {
+Injector.prototype._isMapped = function (id) {
   return this._maps[id] && !this._originalMaps[id];
 };
 
@@ -114,17 +114,17 @@ Injector.prototype._isMapped = function(id) {
  *    .unmap('module/a');
  *    .require('module/a'); // => original module a
  */
-Injector.prototype.unmap = function(ids) {
-  if (typeof ids === 'undefined') {
+Injector.prototype.unmap = function (ids) {
+  if (_.isUndefined(ids)) {
     // restore all
-    this._maps = _.extend({}, this._originalMaps);
+    this._maps = _.assignIn({}, this._originalMaps);
     this._applyMaps();
     return this;
   }
 
   ids = _.toArray(arguments);
 
-  ids.forEach(function(id) {
+  ids.forEach(function (id) {
     this._maps[id] = this._originalMaps[id];
   }, this);
 
@@ -137,7 +137,7 @@ Injector.prototype.unmap = function(ids) {
  * Apply mapping for the context
  * @private
  */
-Injector.prototype._applyMaps = function() {
+Injector.prototype._applyMaps = function () {
   this.context.config.map['*'] = this._maps;
 };
 
@@ -165,18 +165,18 @@ Injector.prototype._applyMaps = function() {
  *     .mock('module/a', 123)
  *     .require('module/a');       // => 123
  */
-Injector.prototype.mock = function(id, value) {
+Injector.prototype.mock = function (id, value) {
 
   // Support object notation
-  if (id && typeof id === 'object') {
-    _.each(id, function(value, key) {
+  if (id && _.isObject(id)) {
+    _.forEach(id, function (value, key) {
       this.mock(key, value);
-    }, this);
+    }.bind(this));
 
     return this;
   }
 
-  if (typeof id !== 'string') {
+  if (!_.isString(id)) {
     throw new TypeError('Module name should be a string.');
   }
 
@@ -206,7 +206,7 @@ Injector.prototype.mock = function(id, value) {
    * See:
    * https://github.com/jrburke/requirejs/blob/dbcfc05df1cec15768a79f12b67c1824c1c484eb/require.js#L2062
    */
-  Injector.requirejs.define(id, function() {
+  Injector.requirejs.define(id, function () {
     return value;
   });
 
@@ -221,7 +221,7 @@ Injector.prototype.mock = function(id, value) {
   return this;
 };
 
-Injector.prototype._isMocked = function(id) {
+Injector.prototype._isMocked = function (id) {
   return Boolean(this._mocked[id]);
 };
 
@@ -241,19 +241,19 @@ Injector.prototype._isMocked = function(id) {
  *     .mock('module/a', 345);
  *
  */
-Injector.prototype.unmock = function(ids) {
-  if (typeof ids === 'undefined') {
+Injector.prototype.unmock = function (ids) {
+  if (_.isUndefined(ids)) {
     // unmock all
-    _.each(this._mocked, function(value, key) {
+    _.forEach(this._mocked, function (value, key) {
       this.unmock(key);
-    }, this);
+    }.bind(this));
 
     return this;
   }
 
   ids = _.toArray(arguments);
 
-  ids.forEach(function(id) {
+  ids.forEach(function (id) {
     delete this._mocked[id];
     this.context.require.undef(id);
 
@@ -267,7 +267,7 @@ Injector.prototype.unmock = function(ids) {
   return this;
 };
 
-Injector.prototype.require = function() {
+Injector.prototype.require = function () {
   return this.context.require.apply(this.context, arguments);
 };
 
@@ -276,10 +276,10 @@ Injector.prototype.require = function() {
  * @param  {String}   id... Module ids to forget
  * @return {Injector}       Injector instance
  */
-Injector.prototype.undef = function() {
+Injector.prototype.undef = function () {
   var ids = _.toArray(arguments);
 
-  ids.forEach(function(id) {
+  ids.forEach(function (id) {
     // remove mock if module has been mocked before
     if (this._isMocked(id)) {
       this.unmock(id);
@@ -294,7 +294,7 @@ Injector.prototype.undef = function() {
 /**
  * Destroy injector and cleanup
  */
-Injector.prototype.destroy = function() {
+Injector.prototype.destroy = function () {
   delete Injector.requirejs.s.contexts[this._contextName];
 };
 
@@ -316,10 +316,10 @@ Injector.Util = {};
  *   // create new context based on default context
  *   Injector.Util.createContext(requirejs, 'mock_25', { extend: '_' })
  */
-Injector.Util.createContext = function(contextName, options) {
+Injector.Util.createContext = function (contextName, options) {
   Injector._ensureRequireJS();
 
-  if (typeof options === 'undefined') {
+  if (_.isUndefined(options)) {
     options = {};
   }
 
@@ -338,7 +338,7 @@ Injector.Util.createContext = function(contextName, options) {
   }
 
   // create new requirejs context based on provided
-  Injector.requirejs.config(_.extend(
+  Injector.requirejs.config(_.assignIn(
     {},
     Injector.Util.getContext(options.extend).config,
     { context: contextName, __originalContext: options.extend }
@@ -353,7 +353,7 @@ Injector.Util.createContext = function(contextName, options) {
  * @param  {String}   contextName Context name
  * @return {RequireJS.Context}    RequireJS context
  */
-Injector.Util.getContext = function(contextName) {
+Injector.Util.getContext = function (contextName) {
   Injector._ensureRequireJS();
   return Injector.requirejs.s.contexts[contextName];
 };
@@ -363,18 +363,18 @@ Injector.Util.getContext = function(contextName) {
  * @param  {Function} requirejs RequireJS instance
  * @return {Injector}           Injector function
  */
-Injector.provide = function(requirejs) {
+Injector.provide = function (requirejs) {
   Injector.requirejs = requirejs;
   return Injector;
 };
 
-Injector._ensureRequireJS = function() {
-  if (typeof Injector.requirejs !== 'function') {
+Injector._ensureRequireJS = function () {
+  if (!_.isFunction(Injector.requirejs())) {
     throw new Error('RequireJS has not been provided!');
   }
 };
 
-Injector.create = function(options) {
+Injector.create = function (options) {
   return new Injector(options);
 };
 
