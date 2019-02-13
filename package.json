@@ -1,12 +1,12 @@
 {
   "name": "requirejs-mock",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "Dependency injector for RequireJS modules.",
   "main": "index.js",
   "scripts": {
-    "test": "node node_modules/jasmine/bin/jasmine",
-    "lint": "node node_modules/eslint/bin/eslint . && node node_modules/jscs/bin/jscs .",
-    "coverage": "./node_modules/.bin/istanbul cover ./node_modules/jasmine/bin/jasmine.js --report lcovonly && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js --verbose"
+    "test": "jasmine",
+    "lint": "eslint .",
+    "coverage": "nyc jasmine "
   },
   "repository": {
     "type": "git",
@@ -16,21 +16,22 @@
     "requirejs",
     "mock"
   ],
-  "author": "Valerii Vasin",
+  "contributors": [
+    "Valerii Vasin",
+    "Mathieu Hendey"
+  ],
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/ValeriiVasin/requirejs-mock/issues"
   },
   "homepage": "https://github.com/ValeriiVasin/requirejs-mock",
   "devDependencies": {
-    "coveralls": "^2.11.2",
-    "eslint": "^0.17.1",
-    "istanbul": "^0.3.13",
+    "eslint": "^5.13.0",
     "jasmine": "^2.2.1",
-    "jscs": "^1.11.3",
+    "nyc": "^13.2.0",
     "requirejs": "^2.1.12"
   },
   "dependencies": {
-    "lodash": "^3.5.0"
+    "lodash": "^4.17.11"
   }
 }
