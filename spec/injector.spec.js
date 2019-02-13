@@ -29,23 +29,23 @@ requirejs.config({
   }
 });
 
-describe('Injector', function() {
+describe('Injector', function () {
   var injector;
   var injectorWithMap;
 
-  beforeEach(function() {
+  beforeEach(function () {
     injector = new Injector();
     injectorWithMap = new Injector({ context: 'withMap' });
   });
 
-  afterEach(function() {
+  afterEach(function () {
     injector.destroy();
     injectorWithMap.destroy();
   });
 
-  describe('Contstructor', function() {
-    it('should throw if requirejs has not been provided', function() {
-      function initInjector() {
+  describe('Contstructor', function () {
+    it('should throw if requirejs has not been provided', function () {
+      function initInjector () {
         Injector.requirejs = null;
         Injector.create();
       }
@@ -54,8 +54,8 @@ describe('Injector', function() {
       Injector.provide(requirejs);
     });
 
-    it('should throw if we are going to use non-exited context for injector', function() {
-      function initInjector() {
+    it('should throw if we are going to use non-exited context for injector', function () {
+      function initInjector () {
         Injector.create({ context: 'nonExistingContext' });
       }
 
@@ -63,20 +63,20 @@ describe('Injector', function() {
     });
   });
 
-  describe('Contexts', function() {
-    it('should allow different contexts', function() {
+  describe('Contexts', function () {
+    it('should allow different contexts', function () {
       expect(injector.require('module/a')).toBe('a');
       expect(injectorWithMap.require('module/a')).toBe('mockA');
     });
   });
 
-  describe('Mapping', function() {
-    it('single module mapping', function() {
+  describe('Mapping', function () {
+    it('single module mapping', function () {
       injector.map('module/a', 'mock/a');
       expect(injector.require('module/a')).toBe('mockA');
     });
 
-    it('multiple modules mapping', function() {
+    it('multiple modules mapping', function () {
       injector.map({
         'module/a': 'mock/a',
         'module/b': 'mock/b'
@@ -86,14 +86,14 @@ describe('Injector', function() {
       expect(injector.require('module/b')).toBe('mockB');
     });
 
-    it('not overrides existed mapping', function() {
+    it('not overrides existed mapping', function () {
       injectorWithMap.map('module/b', 'mock/b');
 
       expect(injectorWithMap.require('module/a')).toBe('mockA');
       expect(injectorWithMap.require('module/b')).toBe('mockB');
     });
 
-    it('allows remap during the execution', function() {
+    it('allows remap during the execution', function () {
       injector.map('module/a', 'mock/a');
       expect(injector.require('module/a')).toBe('mockA');
 
@@ -101,7 +101,7 @@ describe('Injector', function() {
       expect(injector.require('module/a')).toBe('mockB');
     });
 
-    it('works on nested require calls', function() {
+    it('works on nested require calls', function () {
       injector.map({
         'module/a': 'mock/a',
         'module/b': 'mock/b'
@@ -110,7 +110,7 @@ describe('Injector', function() {
       expect(injector.require('module/c')).toBe('mockAmockB');
     });
 
-    it('works on nested require calls with relative path', function() {
+    it('works on nested require calls with relative path', function () {
       injector.map({
         'module/a': 'mock/a',
         'module/b': 'mock/b'
@@ -119,8 +119,8 @@ describe('Injector', function() {
       expect(injector.require('module/c_local')).toBe('mockAmockB');
     });
 
-    it('throws if trying to map mocked before module', function() {
-      function mockAndMap() {
+    it('throws if trying to map mocked before module', function () {
+      function mockAndMap () {
         injector.mock('module/a', 123);
         injector.map('module/a', 'mock/a');
       }
@@ -129,22 +129,22 @@ describe('Injector', function() {
     });
   });
 
-  describe('Unmapping', function() {
-    it('unmap', function() {
+  describe('Unmapping', function () {
+    it('unmap', function () {
       injector.map('module/b', 'mock/b');
       expect(injector.require('module/b')).toBe('mockB');
       injector.unmap('module/b');
       expect(injector.require('module/b')).toBe('b');
     });
 
-    it('unmap to original mapping', function() {
+    it('unmap to original mapping', function () {
       injectorWithMap.map('module/a', 'mock/b');
       expect(injectorWithMap.require('module/a')).toBe('mockB');
       injectorWithMap.unmap('module/a');
       expect(injectorWithMap.require('module/a')).toBe('mockA');
     });
 
-    it('unmap few modules at once', function() {
+    it('unmap few modules at once', function () {
       injector.map({
         'module/a': 'mock/a',
         'module/b': 'mock/b'
@@ -156,7 +156,7 @@ describe('Injector', function() {
       expect(injector.require('module/b')).toBe('b');
     });
 
-    it('unmap all previously mapped modules', function() {
+    it('unmap all previously mapped modules', function () {
       injector.map({
         'module/a': 'mock/a',
         'module/b': 'mock/b'
@@ -169,32 +169,32 @@ describe('Injector', function() {
     });
   });
 
-  describe('Mocks', function() {
+  describe('Mocks', function () {
     var otherInjector;
 
-    beforeEach(function() {
+    beforeEach(function () {
       // create `other` context
       Injector.Util.createContext('other', { extend: Injector.DEFAULT_CONTEXT });
       otherInjector = Injector.create({ context: 'other' });
     });
 
-    afterEach(function() {
+    afterEach(function () {
       otherInjector.destroy();
     });
 
-    it('mock with a simple value', function() {
+    it('mock with a simple value', function () {
       injector.mock('module/a', 15);
       expect(injector.require('module/a')).toBe(15);
     });
 
-    it('nested requires with simple value', function() {
+    it('nested requires with simple value', function () {
       injector.mock('module/a', 'A');
       injector.mock('module/b', 'B');
 
       expect(injector.require('module/c')).toBe('AB');
     });
 
-    it('mock different contexts at a time', function() {
+    it('mock different contexts at a time', function () {
       injector.mock('module/a', 'A');
       injector.mock('module/b', 'B');
 
@@ -205,21 +205,21 @@ describe('Injector', function() {
       expect(otherInjector.require('module/c')).toBe('CD');
     });
 
-    it('mock with an object', function() {
-      var obj = { toString: function() { return 'O'; } };
+    it('mock with an object', function () {
+      var obj = { toString: function () { return 'O'; } };
 
       injector.mock('module/a', obj);
       expect(injector.require('module/a')).toBe(obj);
     });
 
-    it('mock with a function', function() {
-      function f() {}
+    it('mock with a function', function () {
+      function f () { }
 
       injector.mock('module/a', f);
       expect(injector.require('module/a')).toBe(f);
     });
 
-    it('supports multiple mocks notations', function() {
+    it('supports multiple mocks notations', function () {
       injector.mock({
         'module/a': 'hello',
         'module/b': 'world'
@@ -229,21 +229,21 @@ describe('Injector', function() {
       expect(injector.require('module/b')).toBe('world');
     });
 
-    it('throws error if incorrect mock syntax is used for mock', function() {
-      function createMock() {
+    it('throws error if incorrect mock syntax is used for mock', function () {
+      function createMock () {
         injector.mock(123);
       }
 
       expect(createMock).toThrow();
     });
 
-    it('mock mapped (by configuration) modules', function() {
+    it('mock mapped (by configuration) modules', function () {
       injectorWithMap.mock('module/a', 123);
       expect(injectorWithMap.require('module/a')).toBe(123);
     });
 
-    it('throws if mocking module that previously mocked', function() {
-      function mockMocked() {
+    it('throws if mocking module that previously mocked', function () {
+      function mockMocked () {
         injector.mock('module/a', 123);
         injector.mock('module/a', 456);
       }
@@ -251,8 +251,8 @@ describe('Injector', function() {
       expect(mockMocked).toThrow();
     });
 
-    it('throws error if trying to mock and map in same time', function() {
-      function mapAndMock() {
+    it('throws error if trying to mock and map in same time', function () {
+      function mapAndMock () {
         injector.map('module/a', 'mock/a');
         injector.mock('module/a', 123);
       }
@@ -260,7 +260,7 @@ describe('Injector', function() {
       expect(mapAndMock).toThrow();
     });
 
-    it('mock module cached before', function() {
+    it('mock module cached before', function () {
       // cache module
       injector.require('module/a');
       injector.mock('module/a', 123);
@@ -269,22 +269,22 @@ describe('Injector', function() {
     });
   });
 
-  describe('Unmock', function() {
-    beforeEach(function() {
+  describe('Unmock', function () {
+    beforeEach(function () {
       injector.mock({
-          'module/a': 123,
-          'module/b': 345,
-          'module/c': 678
+        'module/a': 123,
+        'module/b': 345,
+        'module/c': 678
       });
     });
 
-    it('unmock module value', function() {
+    it('unmock module value', function () {
       injector.unmock('module/a');
 
       expect(injector.require('module/a')).toBe('a');
     });
 
-    it('unmock few modules', function() {
+    it('unmock few modules', function () {
       injector.unmock('module/a', 'module/b');
 
       expect(injector.require('module/a')).toBe('a');
@@ -292,7 +292,7 @@ describe('Injector', function() {
       expect(injector.require('module/c')).toBe(678);
     });
 
-    it('unmock all mocked modules', function() {
+    it('unmock all mocked modules', function () {
       injector.unmock();
 
       expect(injector.require('module/a')).toBe('a');
@@ -300,7 +300,7 @@ describe('Injector', function() {
       expect(injector.require('module/c')).toBe('ab');
     });
 
-    it('unmock mapped module', function() {
+    it('unmock mapped module', function () {
       injectorWithMap.mock('module/a', 123);
       injectorWithMap.unmock('module/a');
 
@@ -308,8 +308,8 @@ describe('Injector', function() {
     });
   });
 
-  describe('Undef', function() {
-    it('undef one module', function() {
+  describe('Undef', function () {
+    it('undef one module', function () {
       // module/c will be cached
       expect(injector.require('module/c')).toBe('ab');
 
@@ -325,7 +325,7 @@ describe('Injector', function() {
       expect(injector.require('module/c')).toBe('mockAmockB');
     });
 
-    it('undef few modules at once', function() {
+    it('undef few modules at once', function () {
       spyOn(injector.context.require, 'undef').and.callThrough();
 
       injector.undef('module/a', 'module/b');
@@ -334,7 +334,7 @@ describe('Injector', function() {
       expect(injector.context.require.undef).toHaveBeenCalledWith('module/b');
     });
 
-    it('cleanup mocks if module has been mocked before', function() {
+    it('cleanup mocks if module has been mocked before', function () {
       injector.mock('module/a', 123);
       injector.undef('module/a');
 
@@ -342,20 +342,20 @@ describe('Injector', function() {
     });
   });
 
-  describe('Paths support', function() {
+  describe('Paths support', function () {
     var injectorWithPath;
 
-    beforeEach(function() {
+    beforeEach(function () {
       injectorWithPath = new Injector({ context: 'withPath' });
     });
 
-    it('supports maps', function() {
+    it('supports maps', function () {
       expect(injectorWithPath.require('o/a')).toBe('a');
       injectorWithPath.map('o/a', 'm/a');
       expect(injectorWithPath.require('o/a')).toBe('mockA');
     });
 
-    it('supports mocks', function() {
+    it('supports mocks', function () {
       expect(injectorWithPath.require('o/a')).toBe('a');
       injectorWithPath.mock('o/a', 123);
       expect(injectorWithPath.require('o/a')).toBe(123);
