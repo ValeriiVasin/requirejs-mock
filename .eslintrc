@@ -1,53 +1,62 @@
 {
+    "parserOptions": {
+        "sourceType": "script"
+    },
     "env": {
         "amd": true,
         "node": true,
-        "jasmine": true
+        "jasmine": true,
     },
-
     "globals": {},
-
     "rules": {
-        // Disallow declaration of variables already declared in the outer scope
         "no-shadow": 0,
-        // Disallow use of new operator when not part of the assignment or comparison
         "no-new": 0,
-        // Disallow dangling underscores in identifiers
         "no-underscore-dangle": 0,
-        // Disallow use of multiple spaces
         "no-multi-spaces": 0,
-        // Require return statements to either always or never specify values
         "consistent-return": 0,
-
-        // Disallow use of variables before they are defined
-        // except named function definitions
-        "no-use-before-define": [2, "nofunc"],
+        "no-use-before-define": [
+            2,
+            "nofunc"
+        ],
         "no-multiple-empty-lines": 2,
-        // Enforce single quotes
-        "quotes": [2, "single"],
-        "eqeqeq": [2, "allow-null"],
-        // Require immediate function invocation to be wrapped in parentheses
-        "wrap-iife":  [2, "inside"],
-        // Encourages use of dot notation whenever possible
-        "dot-notation": [2, { "allowKeywords": false }],
-        // Disallow declaration of variables that are not used in the code
+        "quotes": [
+            2,
+            "single"
+        ],
+        "eqeqeq": [
+            2,
+            "allow-null"
+        ],
+        "wrap-iife": [
+            2,
+            "inside"
+        ],
+        "dot-notation": [
+            2,
+            {
+                "allowKeywords": false
+            }
+        ],
         "no-unused-vars": 2,
-        // Ensures that all function bodies are strict mode code, while global code is not
-        "strict": [2, "global"],
-        // Disallow reserved words being used as object literal keys (can be removed once we drop IE8 support)
-        "no-reserved-keys": 2,
-
-        //
-        // Stylistic rules
-        // Enforce one true comma style: before line break
-        "comma-style": [2, "last"],
-        // require a space after certain keywords (if, else, for, while, do, switch, try, catch, finally, and with)
-        "space-after-keywords": [1, "always"],
-        // Disallow spaces after a function declaration, function expression or named function expression
-        "space-after-function-name": 2,
-        // Disallow spaces inside parentheses
+        "strict": [
+            2,
+            "global"
+        ],
+        "comma-style": [
+            2,
+            "last"
+        ],
+        "keyword-spacing": [
+            "error",
+            {
+                "after": true
+            }
+        ],
+        "space-before-function-paren": [
+            "error",
+            "always"
+        ],
         "space-in-parens": 2,
-        // Require space before blocks
         "space-before-blocks": 2
     }
 }
