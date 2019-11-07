@@ -24,7 +24,7 @@
   "homepage": "https://github.com/ValeriiVasin/requirejs-mock",
   "devDependencies": {
     "coveralls": "^2.11.2",
-    "eslint": "^0.17.1",
+    "eslint": "^6.6.0",
     "istanbul": "^0.3.13",
     "jasmine": "^2.2.1",
     "jscs": "^1.11.3",
