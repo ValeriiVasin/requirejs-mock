@@ -31,6 +31,6 @@
     "requirejs": "^2.1.12"
   },
   "dependencies": {
-    "lodash": "^3.5.0"
+    "lodash": "^4.17.19"
   }
 }
